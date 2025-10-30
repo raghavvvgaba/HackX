@@ -254,7 +254,7 @@ function EditProfile() {
                   aria-label={`Go to step ${step.id}: ${step.name}`}
                   className="group flex flex-col items-center w-full focus:outline-none"
                 >
-                  <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center font-bold shadow-lg transition-all cursor-pointer ring-offset-2 ring-primary/40 focus-visible:ring-2 ${currentStep>=step.id? 'bg-gradient-to-r from-primary to-accent text-white':'glass text-secondary border soft-divider group-hover:text-text'}`}>{currentStep>step.id? '✓': step.id}</div>
+                  <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center font-bold shadow-lg transition-all cursor-pointer ring-offset-2 ring-primary/40 focus-visible:ring-2 ${currentStep>=step.id? 'bg-blue-500 text-white':'glass text-secondary border soft-divider group-hover:text-text'}`}>{currentStep>step.id? '✓': step.id}</div>
                   <div className="mt-2 text-center px-1 min-w-0">
                     <p className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wide truncate transition-colors ${currentStep===step.id? 'text-text':'group-hover:text-text text-secondary'}`}>{step.name}</p>
                   </div>
@@ -282,7 +282,7 @@ function EditProfile() {
                   type="button"
                   onClick={()=>setCurrentStep(step.id)}
                   aria-label={`Go to step ${step.id}: ${step.name}`}
-                  className={`relative z-10 h-11 w-11 rounded-full flex items-center justify-center text-sm font-semibold transition-all ring-offset-2 ring-primary/40 focus:outline-none focus-visible:ring-2 ${currentStep>=step.id? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg':'glass text-secondary border soft-divider active:scale-95'}`}
+                  className={`relative z-10 h-11 w-11 rounded-full flex items-center justify-center text-sm font-semibold transition-all ring-offset-2 ring-primary/40 focus:outline-none focus-visible:ring-2 ${currentStep>=step.id? 'bg-blue-500 text-white shadow-lg':'glass text-secondary border soft-divider active:scale-95'}`}
                 >
                   {currentStep>step.id? '✓': step.id}
                 </button>

@@ -12,7 +12,7 @@ const MedicalHistoryBlock = ({ records, loading, error, onRefresh }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-r from-primary to-accent text-white flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-blue-500 text-white flex items-center justify-center">
             <FaFileMedicalAlt className="text-sm" />
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-text">Medical History</h2>

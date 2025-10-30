@@ -130,7 +130,7 @@ const SharedDoctorsBlock = () => {
     return (
       <div className="glass rounded-2xl p-6 border soft-divider">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-r from-primary to-accent text-white flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-blue-500 text-white flex items-center justify-center">
             <FaUserMd className="text-sm" />
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-text">Shared with Doctors</h2>
@@ -148,7 +148,7 @@ const SharedDoctorsBlock = () => {
       {/* Header */}
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center shadow-inner flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-inner flex-shrink-0">
           <FaUserMd className="text-lg" />
         </div>
         <h2 className="text-xl font-bold text-text leading-tight">Shared with Doctors</h2>

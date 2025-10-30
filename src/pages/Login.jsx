@@ -88,7 +88,7 @@ export default function Login() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen w-full bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex">
+      <div className="min-h-screen w-full bg-background flex">
         {/* Left Side - Illustration and Features */}
         <motion.div 
           className="hidden lg:flex lg:w-1/2 flex-col justify-center items-center p-12 relative overflow-hidden"
@@ -107,7 +107,7 @@ export default function Login() {
           <div className="relative z-10 mb-8">
             <div className="relative">
               {/* Medical Cross Background */}
-              <div className="w-48 h-48 bg-gradient-to-br from-primary to-secondary rounded-3xl flex items-center justify-center shadow-2xl transform rotate-6">
+              <div className="w-48 h-48 bg-blue-500 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-6">
                 <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center">
                   <FaHeartbeat className="text-6xl text-primary" />
                 </div>
@@ -150,7 +150,7 @@ export default function Login() {
             {/* Mobile Header */}
             <div className="lg:hidden text-center mb-8">
               <motion.div 
-                className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+                className="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, type: "spring" }}

@@ -107,7 +107,7 @@ export default function Signup() {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen w-full bg-gradient-to-br from-secondary/10 via-background to-primary/10 flex">
+            <div className="min-h-screen w-full bg-background flex">
                 {/* Left Side - Illustration and Features */}
                 <motion.div 
                     className="hidden lg:flex lg:w-1/2 flex-col justify-center items-center p-12 relative overflow-hidden"
@@ -126,7 +126,7 @@ export default function Signup() {
                     <div className="relative z-10 mb-8">
                         <div className="relative">
                             {/* Medical Plus Background */}
-                            <div className="w-52 h-52 bg-gradient-to-br from-secondary to-primary rounded-3xl flex items-center justify-center shadow-2xl transform -rotate-6">
+                            <div className="w-52 h-52 bg-blue-500 rounded-3xl flex items-center justify-center shadow-2xl transform -rotate-6">
                                 <div className="w-36 h-36 bg-white rounded-2xl flex items-center justify-center">
                                     <FaClipboardList className="text-7xl text-secondary" />
                                 </div>
@@ -181,7 +181,7 @@ export default function Signup() {
                         {/* Mobile Header */}
                         <div className="lg:hidden text-center mb-8">
                             <motion.div 
-                                className="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+                                className="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ delay: 0.3, type: "spring" }}

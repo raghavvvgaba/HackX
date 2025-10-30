@@ -10,12 +10,12 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="relative rounded-2xl px-5 md:px-8 py-8 md:py-10 glass-elevated overflow-hidden">
           {/* Ambient gradient tint */}
-            <div className="pointer-events-none absolute inset-0 opacity-[0.35] bg-gradient-to-br from-primary/25 via-accent/10 to-transparent" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.15] bg-blue-500" />
           <div className="relative flex flex-col gap-6 md:gap-4 md:flex-row md:items-center md:justify-between">
             {/* Brand */}
             <div className="flex items-center gap-3 max-w-sm">
               <div>
-                <span className="text-lg font-semibold tracking-tight bg-gradient-to-r from-text to-text/70 dark:from-white dark:to-white/70 bg-clip-text text-transparent">VitalLink</span>
+                <span className="text-lg font-semibold tracking-tight text-heading">VitalLink</span>
                 <p className="text-xs md:text-sm text-secondary leading-relaxed">
                   Unified, secure & shareable health records.
                 </p>
@@ -51,7 +51,7 @@ const Footer = () => {
             </nav>
           </div>
           {/* Divider */}
-          <div className="mt-6 mb-5 h-px bg-gradient-to-r from-transparent via-text/10 dark:via-white/10 to-transparent" />
+          <div className="mt-6 mb-5 h-px bg-white/10" />
           {/* Bottom Row */}
           <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[11px] md:text-xs text-secondary">
             <p>© {year} VitalLink. All rights reserved.</p>

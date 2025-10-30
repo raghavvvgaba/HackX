@@ -88,10 +88,10 @@ function DoctorIdDisplay() {
 
     return (
     <div className="glass-elevated rounded-3xl overflow-hidden hover-glow-primary">
-            <div className="p-6 border-b soft-divider bg-gradient-to-r from-primary/15 to-accent/15">
+            <div className="p-6 border-b soft-divider bg-blue-500/10">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-primary to-accent text-white flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center">
                             <FaKey />
                         </div>
                         <h3 className="text-lg font-semibold text-text">Your Doctor ID</h3>
