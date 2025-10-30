@@ -13,6 +13,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check for mock mode (hospital admin)
+    const mockMode = localStorage.getItem('mockMode');
+    const mockHospitalUser = localStorage.getItem('mockHospitalUser');
+    
+    if (mockMode === 'true' && mockHospitalUser) {
+      // Mock mode active - use mock user
+      const mockUser = JSON.parse(mockHospitalUser);
+      setUser(mockUser);
+      setUserRole('hospital_admin');
+      setUserProfile(mockUser);
+      setLoading(false);
+      return;
+    }
+    
+    // Regular Firebase auth
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
@@ -111,6 +126,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    // Check if in mock mode
+    const mockMode = localStorage.getItem('mockMode');
+    if (mockMode === 'true') {
+      // Clear mock mode
+      localStorage.removeItem('mockMode');
+      localStorage.removeItem('mockHospitalUser');
+      setUser(null);
+      setUserRole(null);
+      setUserProfile(null);
+      return;
+    }
+    
+    // Regular Firebase logout
     await signOut(auth);
     setUser(null);
     setUserRole(null);
