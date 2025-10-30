@@ -69,7 +69,7 @@ const Navbar = () => {
             transition={{ duration: 0.6 }}
           >
             <span className="text-xl font-bold text-primary hidden sm:block">
-              HackX
+              VitalLink
             </span>
           </motion.div>
         </Link>
