@@ -1,18 +1,82 @@
 import { getFirestore, collection, addDoc, getDoc, doc, setDoc, updateDoc, serverTimestamp, query, where, getDocs, orderBy, limit, startAfter } from "firebase/firestore";
 import { db, auth } from "../config/firebase";
 import { findDoctorByDoctorId } from "./firestoreDoctorService";
+import {
+  userToFHIRPatient,
+  vitalsToObservations,
+  conditionsToFHIRConditions,
+  allergiesToFHIRAllergyIntolerances,
+  validateFHIRResource
+} from "../services/fhirService";
 
 // Updated function to add/update profile data for a user incrementally
 // This function now uses { merge: true } to merge the incoming profileData with any existing document data
+// Also saves data in FHIR format for compliance
 export async function addUserProfile(userId, profileData) {
   try {
     console.log("Attempting to save to Firestore:", { userId, profileData });
     console.log("Current auth user:", auth.currentUser);
     console.log("Auth state:", auth.currentUser ? "authenticated" : "not authenticated");
-    
+
     // The profileData can be a partial object containing just the section to update, e.g. { basic: {...} } or { medical: {...} }
-  await setDoc(doc(db, "userProfile", userId), profileData, { merge: true });
-    console.log("Successfully saved to Firestore");
+
+    // 1. Save in original format (backward compatibility)
+    await setDoc(doc(db, "userProfile", userId), profileData, { merge: true });
+    console.log("Successfully saved to Firestore (original format)");
+
+    // 2. ALSO save as FHIR resources
+    try {
+      // Get user data for FHIR transformation
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        // Get complete profile data
+        const profileDocRef = doc(db, "userProfile", userId);
+        const profileDoc = await getDoc(profileDocRef);
+        const completeProfile = profileDoc.exists()
+          ? { ...profileDoc.data(), ...profileData }
+          : profileData;
+
+        // Save as FHIR Patient resource
+        const fhirPatient = userToFHIRPatient(userData, completeProfile);
+        validateFHIRResource(fhirPatient);
+        await setDoc(doc(db, "fhir", "patients", userId, "Patient"), fhirPatient);
+
+        // Save vitals as FHIR Observations (if basic info exists)
+        if (completeProfile.basic) {
+          const observations = vitalsToObservations(completeProfile, userId);
+          for (const obs of observations) {
+            validateFHIRResource(obs);
+            await setDoc(doc(db, "fhir", "patients", userId, obs.id), obs);
+          }
+        }
+
+        // Save conditions as FHIR Conditions (if medical info exists)
+        if (completeProfile.medical) {
+          const conditions = conditionsToFHIRConditions(completeProfile, userId);
+          for (const condition of conditions) {
+            validateFHIRResource(condition);
+            await setDoc(doc(db, "fhir", "patients", userId, condition.id), condition);
+          }
+
+          // Save allergies as FHIR AllergyIntolerances
+          const allergies = allergiesToFHIRAllergyIntolerances(completeProfile, userId);
+          for (const allergy of allergies) {
+            validateFHIRResource(allergy);
+            await setDoc(doc(db, "fhir", "patients", userId, allergy.id), allergy);
+          }
+        }
+
+        console.log("Successfully saved as FHIR resources");
+      }
+    } catch (fhirError) {
+      console.error("Error saving FHIR resources (but original data saved):", fhirError);
+      // Don't fail the entire operation if FHIR saving fails
+    }
+
     return { success: true };
   } catch (error) {
     console.error("Error adding/updating user profile:", error);

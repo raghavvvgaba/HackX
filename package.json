@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@headlessui/react": "^2.2.7",
+    "fhir.js": "^0.0.22",
     "firebase": "^11.8.0",
     "framer-motion": "^12.9.2",
     "react": "^19.0.0",
@@ -19,7 +20,8 @@
     "react-hook-form": "^7.56.4",
     "react-icons": "^5.5.0",
     "react-router": "^7.5.3",
-    "react-router-dom": "^7.5.3"
+    "react-router-dom": "^7.5.3",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

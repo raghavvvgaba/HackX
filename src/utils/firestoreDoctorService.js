@@ -1,10 +1,11 @@
-import { 
-  collection, 
-  query, 
-  where, 
-  getDocs, 
-  doc, 
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
   getDoc,
+  setDoc,
   addDoc,
   updateDoc,
   serverTimestamp,
@@ -13,6 +14,17 @@ import {
   startAfter
 } from "firebase/firestore";
 import { db } from "../config/firebase";
+import {
+  recordToFHIREncounter,
+  doctorToFHIRPractitioner,
+  validateFHIRResource
+} from "../services/fhirService";
+import {
+  logPatientAccess,
+  logMedicalRecordAccess,
+  logDataExport,
+  getClientIP
+} from "../services/auditService";
 
 /**
  * Generates a human-readable doctor ID in the format: DR-XXXX-YYYY
@@ -228,15 +240,32 @@ export async function getSharedProfiles(doctorId) {
 /**
  * Gets complete patient profile data
  * @param {string} patientId - The patient's user ID
+ * @param {string} doctorId - The doctor's user ID (for audit logging)
+ * @param {string} doctorName - The doctor's name (for audit logging)
+ * @param {Object} request - Request object (for IP address, optional)
  * @returns {Promise<Object>} - Success/error result with patient profile
  */
-export async function getPatientProfile(patientId) {
+export async function getPatientProfile(patientId, doctorId = null, doctorName = null, request = null) {
   try {
     const patientDocRef = doc(db, "userProfile", patientId);
     const patientDoc = await getDoc(patientDocRef);
-    
+
     if (patientDoc.exists()) {
-      return { success: true, data: patientDoc.data() };
+      const profileData = patientDoc.data();
+
+      // Log access if doctor info is provided
+      if (doctorId && doctorName) {
+        await logPatientAccess({
+          doctorId,
+          doctorName,
+          patientId,
+          resourceType: 'Patient',
+          description: 'Viewed patient profile including demographics, vitals, and medical history',
+          ipAddress: getClientIP(request)
+        });
+      }
+
+      return { success: true, data: profileData };
     } else {
       return { success: false, error: "Patient profile not found." };
     }
@@ -323,11 +352,52 @@ export async function addMedicalRecord(doctorId, patientId, medicalData) {
     // Step 4: Add the medical record
     const medicalRecordsRef = collection(db, "medicalRecords");
     const docRef = await addDoc(medicalRecordsRef, recordData);
-    
-    return { 
-      success: true, 
+
+    // Step 5: ALSO save as FHIR resources
+    try {
+      // Save as FHIR Encounter
+      const encounterData = {
+        ...recordData,
+        id: docRef.id
+      };
+      const fhirEncounter = recordToFHIREncounter(encounterData, doctorInfo);
+      validateFHIRResource(fhirEncounter);
+      await setDoc(doc(db, "fhir", "encounters", fhirEncounter.id), fhirEncounter);
+
+      // Also save doctor as FHIR Practitioner if not already saved
+      const practitionerRef = doc(db, "fhir", "practitioners", doctorId);
+      const practitionerDoc = await getDoc(practitionerRef);
+      if (!practitionerDoc.exists()) {
+        const fhirPractitioner = doctorToFHIRPractitioner(doctorInfo);
+        validateFHIRResource(fhirPractitioner);
+        await setDoc(practitionerRef, fhirPractitioner);
+      }
+
+      console.log("Successfully saved as FHIR Encounter");
+    } catch (fhirError) {
+      console.error("Error saving FHIR resources (but original record saved):", fhirError);
+      // Don't fail the entire operation if FHIR saving fails
+    }
+
+    // Step 6: Log the medical record creation
+    try {
+      await logMedicalRecordAccess({
+        doctorId,
+        doctorName: doctorInfo.name,
+        patientId,
+        action: 'C', // Create
+        recordType: 'Encounter',
+        description: `Added new medical record: Diagnosis: ${medicalData.diagnosis || 'None'}, Symptoms: ${(medicalData.symptoms || []).join(', ')}`,
+        ipAddress: null // Will be passed from frontend
+      });
+    } catch (auditError) {
+      console.error("Error logging audit event (but record saved):", auditError);
+    }
+
+    return {
+      success: true,
       recordId: docRef.id,
-      message: "Medical record added successfully." 
+      message: "Medical record added successfully."
     };
     
   } catch (error) {
@@ -475,21 +545,23 @@ export async function deactivateMedicalRecord(recordId, doctorId) {
  * Gets medical records for a specific patient by an authorized doctor with pagination
  * @param {string} doctorId - The doctor's user ID
  * @param {string} patientId - The patient's user ID
+ * @param {string} doctorName - The doctor's name (for audit logging)
  * @param {Object} lastDoc - The last document from the previous page (optional)
  * @param {number} pageSize - Number of records per page (default: 20)
+ * @param {Object} request - Request object (for IP address, optional)
  * @returns {Promise<Object>} - Success/error result with medical records and pagination info
  */
-export async function getDoctorPatientMedicalRecords(doctorId, patientId, lastDoc = null, pageSize = 20) {
+export async function getDoctorPatientMedicalRecords(doctorId, patientId, doctorName = null, lastDoc = null, pageSize = 20, request = null) {
   try {
     // Verify doctor has active access to patient's profile
     const shareId = `${doctorId}_${patientId}`;
     const shareRef = doc(db, "shared_profiles", shareId);
     const shareDoc = await getDoc(shareRef);
-    
+
     if (!shareDoc.exists() || shareDoc.data().status !== 'active') {
-      return { 
-        success: false, 
-        error: "You don't have access to this patient's profile." 
+      return {
+        success: false,
+        error: "You don't have access to this patient's profile."
       };
     }
 
@@ -501,7 +573,7 @@ export async function getDoctorPatientMedicalRecords(doctorId, patientId, lastDo
     );
 
     const querySnapshot = await getDocs(q);
-    
+
     const allRecords = [];
     querySnapshot.forEach((doc) => {
       allRecords.push({
@@ -523,9 +595,25 @@ export async function getDoctorPatientMedicalRecords(doctorId, patientId, lastDo
     // Apply pagination
     const paginatedRecords = activeRecords.slice(0, pageSize);
     const hasMore = activeRecords.length > pageSize;
-    
-    return { 
-      success: true, 
+
+    // Log the access if doctor name is provided
+    if (doctorName && paginatedRecords.length > 0) {
+      try {
+        await logPatientAccess({
+          doctorId,
+          doctorName,
+          patientId,
+          resourceType: 'MedicalRecord',
+          description: `Viewed ${paginatedRecords.length} medical record(s) from their history`,
+          ipAddress: getClientIP(request)
+        });
+      } catch (auditError) {
+        console.error("Error logging audit event:", auditError);
+      }
+    }
+
+    return {
+      success: true,
       data: paginatedRecords,
       pagination: {
         hasMore,
@@ -534,12 +622,12 @@ export async function getDoctorPatientMedicalRecords(doctorId, patientId, lastDo
         requestedPageSize: pageSize
       }
     };
-    
+
   } catch (error) {
     console.error("Error fetching medical records:", error);
-    return { 
-      success: false, 
-      error: "Failed to fetch medical records." 
+    return {
+      success: false,
+      error: "Failed to fetch medical records."
     };
   }
 }
