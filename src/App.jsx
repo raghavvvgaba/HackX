@@ -13,6 +13,11 @@ import PatientProfilePage from './pages/Doctor/PatientProfilePage';
 import EditProfile from './pages/User/EditProfile';
 import Onboarding from './components/Onboarding';
 import { Profile } from './pages/User/Profile';
+import HospitalLayout from './pages/Hospital/HospitalLayout';
+import HospitalDashboard from './pages/Hospital/HospitalDashboardNew';
+import InstitutionOnboarding from './pages/Hospital/InstitutionOnboarding';
+import PatientConsentRequests from './pages/Hospital/PatientConsentRequests';
+import InstitutionSettings from './pages/Hospital/InstitutionSettings';
 
 // https://www.hover.dev/components/navigation Use this for prebuilt components
 
@@ -73,6 +78,16 @@ const App = () => {
         <Route path="/doctor" element={<PrivateRoute><DoctorLayout /></PrivateRoute>} >
           <Route index element={<DoctorDashboard />} />
           <Route path="shared-profile/:shareId" element={<PatientProfilePage />} />
+        </Route>
+        <Route path="/hospital" element={<HospitalLayout />} >
+          <Route index element={<HospitalDashboard />} />
+          <Route path="dashboard" element={<HospitalDashboard />} />
+          <Route path="onboarding" element={<InstitutionOnboarding />} />
+          <Route path="consent-requests" element={<PatientConsentRequests />} />
+          <Route path="settings" element={<InstitutionSettings />} />
+          <Route path="patients" element={<div className="p-8 text-center text-gray-600">Patient List - Coming Soon</div>} />
+          <Route path="staff" element={<div className="p-8 text-center text-gray-600">Staff Management - Coming Soon</div>} />
+          <Route path="departments" element={<div className="p-8 text-center text-gray-600">Departments - Coming Soon</div>} />
         </Route>
       </Routes>
     </div>

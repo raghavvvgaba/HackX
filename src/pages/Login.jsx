@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaEnvelope, FaLock, FaUserMd, FaUserAlt, FaEye, FaEyeSlash, FaHeartbeat, FaShieldAlt, FaUsers } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUserMd, FaUserAlt, FaEye, FaEyeSlash, FaHeartbeat, FaShieldAlt, FaUsers, FaHospital } from "react-icons/fa";
 import { useAuth } from "../context/authContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import Navbar from "../components/Navbar";
+import { loginHospitalAdmin, getMockHospitalUser } from "../services/mockHospitalService";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export default function Login() {
     if (!loading && user && userRole) {
       if (userRole === "doctor") {
         navigate("/doctor");
+      } else if (userRole === "hospital_admin") {
+        navigate("/hospital");
       } else {
         navigate("/user");
       }
@@ -55,6 +58,37 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
+    // MOCK MODE: Hospital login bypass
+    if (form.role === "hospital_admin") {
+      try {
+        const result = await loginHospitalAdmin(form.email, form.password);
+        if (result.success) {
+          // Store mock user in localStorage for persistence
+          localStorage.setItem('mockHospitalUser', JSON.stringify(result.user));
+          localStorage.setItem('mockMode', 'true');
+          console.log("Mock Hospital Login successful:", result.user);
+          console.log("localStorage set:", {
+            mockMode: localStorage.getItem('mockMode'),
+            mockUser: localStorage.getItem('mockHospitalUser')
+          });
+          
+          // Small delay to ensure localStorage is set, then navigate
+          setTimeout(() => {
+            window.location.href = "/hospital/dashboard";
+          }, 100);
+          return;
+        } else {
+          setFormError(result.error);
+          return;
+        }
+      } catch (error) {
+        setFormError("Mock login failed. Try: admin@hospital.com / hospital123");
+        return;
+      }
+    }
+    
+    // Regular Firebase login for patients and doctors
     try {
       const { user } = await login(form.email, form.password);
       console.log("Login successful:", user);
@@ -70,6 +104,8 @@ export default function Login() {
         // Navigate based on actual role from Firestore, not the selected tab
         if (userRole === "doctor") {
           navigate("/doctor");
+        } else if (userRole === "hospital_admin") {
+          navigate("/hospital");
         } else {
           // For regular users, navigate to user dashboard
           // The authContext will handle loading their role
@@ -174,30 +210,42 @@ export default function Login() {
               </div>
 
               {/* Role Selection */}
-              <div className="flex gap-3 p-2 bg-gray-100/80 dark:bg-white/5 rounded-2xl backdrop-blur-sm">
+              <div className="grid grid-cols-3 gap-2 p-2 bg-gray-100/80 dark:bg-white/5 rounded-2xl backdrop-blur-sm">
                 <button
                   type="button"
                   onClick={() => handleRoleSelect("user")}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
                     form.role === "user"
                       ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
                       : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
                   }`}
                 >
-                  <FaUserAlt className="text-sm" />
-                  <span className="text-sm">User</span>
+                  <FaUserAlt className="text-base" />
+                  <span className="text-xs">Patient</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleRoleSelect("doctor")}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
                     form.role === "doctor"
                       ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
                       : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
                   }`}
                 >
-                  <FaUserMd className="text-sm" />
-                  <span className="text-sm">Doctor</span>
+                  <FaUserMd className="text-base" />
+                  <span className="text-xs">Doctor</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRoleSelect("hospital_admin")}
+                  className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
+                    form.role === "hospital_admin"
+                      ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
+                      : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
+                  }`}
+                >
+                  <FaHospital className="text-base" />
+                  <span className="text-xs">Hospital</span>
                 </button>
               </div>
 
@@ -263,7 +311,7 @@ export default function Login() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Log In as {form.role === "doctor" ? "Doctor" : "User"}
+                Log In as {form.role === "doctor" ? "Doctor" : form.role === "hospital_admin" ? "Hospital" : "Patient"}
               </motion.button>
 
               <div className="text-center pt-4">

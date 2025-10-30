@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaUser, FaEnvelope, FaLock, FaUserMd, FaUserAlt, FaEye, FaEyeSlash, FaHeartbeat, FaShieldAlt, FaUsers, FaClipboardList } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaLock, FaUserMd, FaUserAlt, FaEye, FaEyeSlash, FaHeartbeat, FaShieldAlt, FaUsers, FaClipboardList, FaHospital } from "react-icons/fa";
 import { useAuth } from "../context/authContext";
 import Navbar from "../components/Navbar";
 
@@ -17,7 +17,13 @@ export default function Signup() {
     useEffect(() => {
         if (justSignedUp) return; // allow manual delayed navigation so toast is visible
         if (!loading && user && userRole) {
-            navigate(userRole === 'doctor' ? '/doctor' : '/user');
+            if (userRole === 'doctor') {
+                navigate('/doctor');
+            } else if (userRole === 'hospital_admin') {
+                navigate('/hospital');
+            } else {
+                navigate('/user');
+            }
         }
     }, [user, userRole, loading, navigate, justSignedUp]);
 
@@ -86,7 +92,12 @@ export default function Signup() {
             await signup(form.name, form.email, form.password, form.role);
             // Show toast then navigate after short delay so user sees confirmation
             setShowToast(true);
-            const destination = form.role === 'doctor' ? '/doctor' : '/user/onboarding';
+            let destination = '/user/onboarding';
+            if (form.role === 'doctor') {
+                destination = '/doctor';
+            } else if (form.role === 'hospital_admin') {
+                destination = '/hospital/onboarding';
+            }
             setTimeout(() => {
                 navigate(destination);
             }, 1400); // 1.4s visibility
@@ -205,30 +216,42 @@ export default function Signup() {
                             </div>
 
                             {/* Role Selection */}
-                            <div className="flex gap-3 p-2 bg-gray-100/80 dark:bg-white/5 rounded-2xl backdrop-blur-sm">
+                            <div className="grid grid-cols-3 gap-2 p-2 bg-gray-100/80 dark:bg-white/5 rounded-2xl backdrop-blur-sm">
                                 <button
                                     type="button"
                                     onClick={() => handleRoleSelect("user")}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                                    className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
                                         form.role === "user"
                                             ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
                                             : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
                                     }`}
                                 >
-                                    <FaUserAlt className="text-sm" />
-                                    <span className="text-sm">User</span>
+                                    <FaUserAlt className="text-base" />
+                                    <span className="text-xs">Patient</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => handleRoleSelect("doctor")}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                                    className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
                                         form.role === "doctor"
                                             ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
                                             : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
                                     }`}
                                 >
-                                    <FaUserMd className="text-sm" />
-                                    <span className="text-sm">Doctor</span>
+                                    <FaUserMd className="text-base" />
+                                    <span className="text-xs">Doctor</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRoleSelect("hospital_admin")}
+                                    className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
+                                        form.role === "hospital_admin"
+                                            ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
+                                            : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
+                                    }`}
+                                >
+                                    <FaHospital className="text-base" />
+                                    <span className="text-xs">Hospital</span>
                                 </button>
                             </div>
 
@@ -337,7 +360,7 @@ export default function Signup() {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                Create {form.role === "doctor" ? "Doctor" : "User"} Account
+                                Create {form.role === "doctor" ? "Doctor" : form.role === "hospital_admin" ? "Hospital" : "Patient"} Account
                             </motion.button>
 
                             <div className="text-center pt-4">
