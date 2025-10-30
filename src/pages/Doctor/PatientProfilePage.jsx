@@ -675,7 +675,7 @@ function PatientProfilePage() {
             {/* Patient Header */}
             <div className="glass-elevated rounded-3xl p-5 sm:p-6">
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center shadow-lg">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-500 text-white flex items-center justify-center shadow-lg">
                         <FaUser className="text-xl sm:text-2xl" />
                     </div>
                     <div className="min-w-0">

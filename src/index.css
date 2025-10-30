@@ -20,39 +20,24 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Aurora/Mesh gradient background container */
+/* Aurora Background - adapts to light/dark mode */
 .aurora-bg {
   position: relative;
   isolation: isolate;
-}
-.aurora-bg::before {
-  content: "";
-  position: fixed;
-  inset: -20% -10% -10% -10%;
-  z-index: -2;
-  background: radial-gradient(60% 50% at 20% 20%, rgb(var(--primary-rgb) / 0.35) 0%, transparent 60%),
-              radial-gradient(50% 40% at 80% 10%, rgb(var(--accent-rgb) / 0.32) 0%, transparent 60%),
-              radial-gradient(40% 35% at 70% 80%, rgb(var(--primary-rgb) / 0.28) 0%, transparent 70%),
-              linear-gradient(180deg, rgba(255 255 255 / 0.02), rgba(0 0 0 / 0.02));
-  filter: blur(40px) saturate(160%);
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
-/* Animated aurora layer */
-.aurora-bg::after {
-  content: "";
-  position: fixed;
-  inset: -30% -20% -20% -20%;
-  z-index: -3;
-  background: radial-gradient(45% 45% at 10% 70%, rgb(var(--primary-rgb) / 0.25) 0%, transparent 70%),
-              radial-gradient(50% 50% at 90% 30%, rgb(var(--accent-rgb) / 0.22) 0%, transparent 70%);
-  filter: blur(55px) saturate(160%);
-  animation: auroraMove 28s ease-in-out infinite alternate;
+/* Light mode specific adjustments */
+.light .aurora-bg {
+  background-color: #F9FAFB;
+  color: #1F2937;
 }
 
-@keyframes auroraMove {
-  0% { transform: translate3d(0,0,0) scale(1); }
-  50% { transform: translate3d(-3%, 2%, 0) scale(1.03); }
-  100% { transform: translate3d(3%, -2%, 0) scale(1.06); }
+/* Dark mode specific adjustments */
+.dark .aurora-bg {
+  background-color: #0a0a0a;
+  color: #FFFFFF;
 }
 
 /* Glass utility with backdrop blur and subtle border */
@@ -61,6 +46,20 @@ body {
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
   border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+/* Light mode glass adjustment */
+.light .glass {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 136, 255, 0.15);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode glass adjustment */
+.dark .glass {
+  background: rgba(17, 24, 39, 0.5);
+  border: 1px solid rgba(0, 136, 255, 0.25);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
 
@@ -73,16 +72,45 @@ body {
   box-shadow: 0 12px 40px rgba(0,0,0,0.35);
 }
 
+/* Light mode glass-elevated adjustment */
+.light .glass-elevated {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 136, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode glass-elevated adjustment */
+.dark .glass-elevated {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(0, 136, 255, 0.3);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
 /* Soft divider lines suitable for dark/light */
 .soft-divider {
   border-color: color-mix(in oklab, var(--glass-border), rgba(var(--primary-rgb) / 0.25));
 }
 
+.light .soft-divider {
+  border-color: rgba(0, 136, 255, 0.15);
+}
+
+.dark .soft-divider {
+  border-color: rgba(0, 136, 255, 0.25);
+}
+
 /* Hover glow utilities */
 .hover-glow-primary { transition: box-shadow 200ms, transform 200ms; }
-.hover-glow-primary:hover { box-shadow: 0 8px 24px rgb(var(--primary-rgb) / 0.22), 0 1px 6px rgb(var(--primary-rgb) / 0.16); }
+.hover-glow-primary:hover { box-shadow: 0 8px 24px rgba(0, 136, 255, 0.25), 0 1px 6px rgba(0, 136, 255, 0.16); }
+
+.light .hover-glow-primary:hover { box-shadow: 0 8px 24px rgba(0, 136, 255, 0.2), 0 1px 6px rgba(0, 136, 255, 0.12); }
+.dark .hover-glow-primary:hover { box-shadow: 0 8px 24px rgba(0, 136, 255, 0.3), 0 1px 6px rgba(0, 136, 255, 0.2); }
+
 .hover-glow-accent { transition: box-shadow 200ms, transform 200ms; }
-.hover-glow-accent:hover { box-shadow: 0 8px 24px rgb(var(--accent-rgb) / 0.24), 0 1px 6px rgb(var(--accent-rgb) / 0.18); }
+.hover-glow-accent:hover { box-shadow: 0 8px 24px rgba(0, 212, 255, 0.24), 0 1px 6px rgba(0, 212, 255, 0.18); }
+
+.light .hover-glow-accent:hover { box-shadow: 0 8px 24px rgba(0, 136, 255, 0.2), 0 1px 6px rgba(0, 136, 255, 0.12); }
+.dark .hover-glow-accent:hover { box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3), 0 1px 6px rgba(0, 212, 255, 0.2); }
 
 /* Lift and subtle scale */
 .lift-on-hover { transition: transform 220ms ease, box-shadow 220ms ease; }
@@ -90,22 +118,176 @@ body {
 
 /* Sheen effect */
 .shine-on-hover { position: relative; overflow: hidden; }
-.shine-on-hover::after {
+
+/* Light mode sheen */
+.light .shine-on-hover::after {
+  content: ""; position: absolute; inset: -150% -50% auto -50%; height: 200%;
+  background: linear-gradient(120deg, transparent 0%, rgba(0, 136, 255, 0.08) 20%, rgba(0, 136, 255, 0.02) 35%, transparent 60%);
+  transform: rotate(8deg) translate3d(-40%,0,0);
+  transition: transform 600ms ease, opacity 300ms ease; opacity: 0.0; pointer-events: none;
+}
+.light .shine-on-hover:hover::after { transform: rotate(8deg) translate3d(35%,0,0); opacity: 1; }
+
+/* Dark mode sheen */
+.dark .shine-on-hover::after {
   content: ""; position: absolute; inset: -150% -50% auto -50%; height: 200%;
   background: linear-gradient(120deg, transparent 0%, rgb(255 255 255 / 0.035) 20%, rgb(255 255 255 / 0.01) 35%, transparent 60%);
   transform: rotate(8deg) translate3d(-40%,0,0);
   transition: transform 600ms ease, opacity 300ms ease; opacity: 0.0; pointer-events: none;
 }
-.shine-on-hover:hover::after { transform: rotate(8deg) translate3d(35%,0,0); opacity: 1; }
+.dark .shine-on-hover:hover::after { transform: rotate(8deg) translate3d(35%,0,0); opacity: 1; }
 
-/* CTA button with accent gradient + glow */
-.glass-cta { color: white; border-radius: 1rem; background: linear-gradient(90deg, var(--color-accent), color-mix(in oklab, var(--color-accent), black 20%)); box-shadow: 0 8px 22px rgb(var(--accent-rgb) / 0.25); transition: filter 160ms, transform 160ms, box-shadow 160ms; }
-.glass-cta:hover { filter: brightness(1.03); transform: translateY(-1px); box-shadow: 0 10px 28px rgb(var(--accent-rgb) / 0.35); }
+/* Primary CTA button - solid blue with white text */
+.glass-cta { 
+  color: white;
+  border-radius: 1rem; 
+  background: #0088FF;
+  box-shadow: 0 8px 22px rgba(0, 136, 255, 0.35);
+  transition: background-color 160ms, transform 160ms, box-shadow 160ms;
+  font-weight: 600;
+}
+
+.glass-cta:hover { 
+  background-color: #0066CC;
+  transform: translateY(-2px); 
+  box-shadow: 0 12px 32px rgba(0, 136, 255, 0.45); 
+}
+
+/* Light mode - maintain white text on blue */
+.light .glass-cta {
+  color: white;
+}
+
+.light .glass-cta:hover {
+  background-color: #0052A3;
+}
+
+/* Standardized button styling */
+button, a[role="button"] {
+  transition: all 160ms ease;
+}
+
+/* Primary button - blue background with white text */
+.btn-primary {
+  background-color: #0088FF;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 136, 255, 0.25);
+}
+
+.btn-primary:hover {
+  background-color: #0066CC;
+  box-shadow: 0 6px 16px rgba(0, 136, 255, 0.35);
+}
+
+/* Secondary/Transparent button - dark mode */
+.dark .btn-secondary {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Secondary/Transparent button - light mode */
+.light .btn-secondary {
+  background: transparent;
+  color: #0052A3;
+  border: 1px solid rgba(0, 82, 163, 0.3);
+}
+
+.light .btn-secondary:hover {
+  background: rgba(0, 82, 163, 0.05);
+  border-color: rgba(0, 82, 163, 0.6);
+}
+
+/* Headings - use heading color variable for proper contrast */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-heading);
+}
+
+/* Light mode text colors for better accessibility */
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: #0052A3;
+}
+
+.light {
+  --color-heading: #0052A3;
+}
+
+.dark {
+  --color-heading: #5BA3FF;
+}
+
+/* Clear text - no glass effects, solid color */
+.text-clear {
+  color: var(--color-text);
+  background: none;
+  backdrop-filter: none;
+}
 
 /* Ensure root element covers full height */
 #root {
   min-height: 100vh;
   background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Light mode global adjustments */
+.light {
+  background-color: #F9FAFB;
+  color: #1F2937;
+}
+
+.light body {
+  background-color: #F9FAFB;
+  color: #1F2937;
+}
+
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: #0052A3;
+}
+
+.light .text-secondary {
+  color: #6B7280;
+}
+
+.light .text-text {
+  color: #1F2937;
+}
+
+/* Ensure light mode text is readable */
+.light .dark\\:text-white {
+  color: #1F2937;
+}
+
+/* Dark mode global adjustments */
+.dark {
+  background-color: #0a0a0a;
+  color: #FFFFFF;
+}
+
+.dark body {
+  background-color: #0a0a0a;
+  color: #FFFFFF;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #5BA3FF;
+}
+
+.dark .text-secondary {
+  color: #8B95B8;
+}
+
+.dark .text-text {
+  color: #FFFFFF;
 }
 /* :root {
   --text: #020008;

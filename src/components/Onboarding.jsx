@@ -143,7 +143,7 @@ function Onboarding() {
 				<div className="glass-elevated rounded-3xl p-8 border soft-divider">
 					{/* Success Animation */}
 					<div className="mb-6 relative">
-						<div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center shadow-xl">
+						<div className="w-24 h-24 mx-auto rounded-full bg-green-500 flex items-center justify-center shadow-xl">
 							<svg className="w-12 h-12 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
 							</svg>
@@ -788,7 +788,7 @@ function Onboarding() {
 							{steps.map((step, stepIdx) => (
 								<div key={step.id} className="flex items-center flex-1 min-w-0">
 									<div className="flex flex-col items-center w-full">
-										<div className={`rounded-full h-12 w-12 sm:h-14 sm:w-14 flex items-center justify-center font-bold text-base sm:text-lg shadow-lg ${currentStep >= step.id ? 'bg-gradient-to-r from-primary to-accent text-white' : 'glass border soft-divider text-secondary'}`}>
+										<div className={`rounded-full h-12 w-12 sm:h-14 sm:w-14 flex items-center justify-center font-bold text-base sm:text-lg shadow-lg ${currentStep >= step.id ? 'bg-blue-500 text-white' : 'glass border soft-divider text-secondary'}`}>
 											{currentStep > step.id ? <span className="text-xl">✓</span> : <span>{step.id}</span>}
 										</div>
 										<div className="mt-2 text-center min-w-0">

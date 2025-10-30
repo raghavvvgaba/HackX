@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaShieldAlt,
@@ -29,7 +29,7 @@ const features = [
       "Emergency contacts & accessibility needs",
       "Blood group, allergies & current medications",
     ],
-    accent: "from-accent/20 via-accent/10 to-transparent",
+    accent: "bg-blue-500/10",
   },
   {
     id: "sharing",
@@ -41,7 +41,7 @@ const features = [
       "Instant access for authorized doctors",
       "Revoke access anytime",
     ],
-    accent: "from-primary/25 via-primary/10 to-transparent",
+    accent: "bg-blue-500/10",
   },
   {
     id: "records",
@@ -53,7 +53,7 @@ const features = [
       "Test recommendations & follow-up notes",
       "Secure access with audit trails",
     ],
-    accent: "from-accent/30 via-accent/10 to-transparent",
+    accent: "bg-blue-500/10",
   },
   {
     id: "ai",
@@ -65,7 +65,7 @@ const features = [
       "General wellness advice",
       "Medical term explanations",
     ],
-    accent: "from-primary/30 via-primary/10 to-transparent",
+    accent: "bg-blue-500/10"
   },
 ];
 
@@ -153,8 +153,10 @@ const SectionHeading = ({ eyebrow, title, sub }) => (
       initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-text to-text/70 dark:from-white dark:to-white/70 bg-clip-text text-transparent"
+      className="text-3xl md:text-4xl font-bold text-heading"
     >
+
+
       {title}
     </motion.h2>
     {sub && (
@@ -162,7 +164,7 @@ const SectionHeading = ({ eyebrow, title, sub }) => (
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="mt-4 text-base md:text-lg text-secondary max-w-2xl mx-auto"
+        className="mt-4 text-base md:text-lg text-secondary max-w-2xl mx-auto text-clear"
       >
         {sub}
       </motion.p>
@@ -179,9 +181,9 @@ const FeatureCard = ({ feature, idx }) => {
       transition={{ duration: 0.55, delay: idx * 0.08 }}
       className="relative group rounded-2xl p-6 md:p-7 glass-elevated lift-on-hover shine-on-hover overflow-hidden"
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-accent/10 via-transparent to-primary/10" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-blue-500/5" />
       <div className="flex items-center gap-4 mb-4 relative z-10">
-        <span className="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 via-surface/60 to-surface shadow-inner border border-white/10">
+        <span className="flex items-center justify-center w-14 h-14 rounded-xl bg-blue-500/10 shadow-inner border border-white/10">
           {feature.icon}
         </span>
         <h3 className="text-xl font-semibold text-text dark:text-white">
@@ -203,7 +205,7 @@ const FeatureCard = ({ feature, idx }) => {
         ))}
       </ul>
       <div
-        className={`pointer-events-none absolute -top-1/2 left-0 right-0 h-full blur-3xl opacity-50 bg-gradient-to-b ${feature.accent}`}
+        className={`pointer-events-none absolute -top-1/2 left-0 right-0 h-full blur-3xl opacity-30 ${feature.accent}`}
       />
     </motion.div>
   );
@@ -218,7 +220,7 @@ const JourneyStep = ({ step, index }) => (
     className="relative flex flex-col gap-4 p-6 rounded-2xl glass-elevated lift-on-hover"
   >
     <div className="flex items-center gap-4">
-      <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-accent/30 to-primary/30 text-accent text-xl font-bold border border-white/10 shadow-inner">
+      <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-blue-500/15 text-accent text-xl font-bold border border-white/10 shadow-inner">
         {step.icon}
       </div>
       <div>
@@ -226,7 +228,7 @@ const JourneyStep = ({ step, index }) => (
         <p className="text-secondary text-sm mt-1">{step.text}</p>
       </div>
     </div>
-    <span className="absolute -top-3 -right-3 text-[11px] px-2 py-1 rounded-full bg-gradient-to-r from-primary/40 to-accent/40 backdrop-blur-md border border-white/10 text-white/90 font-semibold shadow">
+    <span className="absolute -top-3 -right-3 text-[11px] px-2 py-1 rounded-full bg-blue-500/20 backdrop-blur-md border border-white/10 text-white/90 font-semibold shadow">
       {index + 1}
     </span>
   </motion.div>
@@ -240,7 +242,7 @@ const TestimonialCard = ({ t, idx }) => (
     transition={{ duration: 0.55, delay: idx * 0.08 }}
     className="relative rounded-2xl p-6 glass-elevated shine-on-hover"
   >
-    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/15 via-transparent to-accent/20 opacity-60" />
+    <div className="absolute inset-0 rounded-2xl bg-blue-500/10 opacity-40" />
     <div className="relative">
       <p className="text-sm md:text-base text-text/90 dark:text-white/90 leading-relaxed italic">
         "{t.quote}"
@@ -297,65 +299,69 @@ const LandingPage = () => {
     } else navigate("/signup");
   };
 
-  const year = useMemo(() => new Date().getFullYear(), []);
 
   return (
     <>
       <Navbar />
-      <div className="aurora-bg min-h-screen w-full overflow-x-hidden text-text dark:text-white selection:bg-accent/30 selection:text-text">
+      <div className="aurora-bg min-h-screen w-full overflow-x-hidden text-white selection:bg-lightBlue/30 selection:text-white">
         {/* ------------------------------ HERO ------------------------------ */}
-        <section className="relative flex flex-col justify-center items-center min-h-[92vh] px-6 pt-28 md:pt-32 text-center">
-          {/* Decorative orchestrated moving orbs */}
-          <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-            <div className="absolute w-[38rem] h-[38rem] -top-40 -left-40 rounded-full bg-gradient-to-br from-primary/35 to-accent/20 blur-3xl opacity-40 animate-pulse" />
-            <div className="absolute w-[30rem] h-[30rem] top-1/3 -right-40 rounded-full bg-gradient-to-tl from-accent/30 to-primary/20 blur-3xl opacity-40 animate-[pulse_9s_ease-in-out_infinite_alternate]" />
-          </div>
-          {/* Illustration removed (previous external SVG was failing to load) */}
+        <section className="relative flex flex-col justify-center items-center min-h-[85vh] px-6 pt-20 md:pt-24 pb-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-4xl mx-auto"
+            className="max-w-5xl mx-auto w-full"
           >
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs tracking-wide font-medium text-accent shadow hover-glow-accent"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-xs tracking-widest font-semibold text-yellow-400 mb-6 sm:mb-8"
             >
-              <FaLock className="text-accent" /> Secure • Share • Thrive
+              <FaLock className="text-yellow-400" />
+              Secure • Share • Thrive
             </motion.span>
-            <h1 className="mt-6 text-4xl md:text-6xl font-extrabold leading-tight bg-[linear-gradient(92deg,var(--color-text),rgba(var(--primary-rgb)/0.85))] dark:bg-[linear-gradient(92deg,#fff,rgba(var(--primary-rgb)/0.85))] bg-clip-text text-transparent">
-              Your Complete Health Profile, Digitized
-            </h1>
-            <p className="mt-6 text-base md:text-xl text-secondary max-w-2xl mx-auto leading-relaxed">
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.7 }}
+              className="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-6 sm:mb-8 tracking-tight"
+            >
+              <span className="text-white">Your Complete Health Profile, </span>
+              <span className="text-lightBlue">Digitized</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.7 }}
+              className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10"
+            >
               VitalLink helps patients create comprehensive health profiles and share them securely with doctors. Simple, secure, and always accessible.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.7 }}
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-10 sm:mb-12"
+            >
               <button
                 onClick={handleGetStarted}
-                className="glass-cta px-7 py-3.5 text-base font-semibold shadow-lg hover:shadow-xl active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="px-8 sm:px-10 py-3.5 sm:py-4 bg-darkBlue text-white font-semibold rounded-lg hover:bg-opacity-90 transition-all active:scale-[0.97] whitespace-nowrap shadow-lg hover:shadow-xl"
               >
                 {user ? "Go to Dashboard" : "Get Started Free"}
               </button>
               <a
                 href="#features"
-                className="px-7 py-3.5 rounded-xl font-semibold text-sm md:text-base bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/20 hover:bg-white/90 dark:hover:bg-white/10 transition-colors text-text dark:text-white lift-on-hover"
+                className="px-8 sm:px-10 py-3.5 sm:py-4 border border-white/30 text-white font-semibold rounded-lg hover:border-white/60 hover:bg-white/5 transition-all whitespace-nowrap"
               >
                 Explore Features
               </a>
-            </div>
-            <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto text-[11px] md:text-xs text-secondary">
-              {["Doctor ID System", "Profile Sharing", "Medical Records", "AI Assistant"].map((tag) => (
-                <div
-                  key={tag}
-                  className="px-3 py-2 rounded-lg glass text-secondary/80 dark:text-secondary backdrop-blur-md border border-white/10"
-                >
-                  {tag}
-                </div>
-              ))}
-            </div>
+            </motion.div>
           </motion.div>
+
           {/* Minimal Scroll Arrow */}
           <motion.button
             type="button"
@@ -366,7 +372,7 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.55 }}
-            className="absolute bottom-8 md:bottom-10 w-10 h-10 rounded-full flex items-center justify-center text-accent hover:bg-accent/10 transition-all"
+            className="absolute bottom-6 sm:bottom-8 w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all border border-white/20"
             aria-label="Scroll to features"
           >
             <svg
@@ -400,13 +406,13 @@ const LandingPage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative rounded-2xl p-8 md:p-10 flex flex-col justify-between overflow-hidden glass-elevated col-span-full xl:col-span-1"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-primary/10 to-transparent" />
+              <div className="absolute inset-0 bg-blue-500/5" />
               <div className="relative">
                 <h3 className="text-2xl font-bold mb-4 text-text dark:text-white flex items-center gap-3">
                   <FaLock className="text-accent" /> Built on Security
                 </h3>
                 <p className="text-secondary text-sm md:text-base leading-relaxed mb-6">
-                  Your health data is protected with Firebase's enterprise-grade security, role-based access controls, and encrypted data transmission.
+                  Your health data is protected with Firebase enterprise-grade security, role-based access controls, and encrypted data transmission.
                 </p>
                 <ul className="grid grid-cols-1 gap-3 text-sm">
                   {["Firebase Authentication", "Role-based access control", "Encrypted data transmission", "Secure sharing permissions"].map((p) => (
@@ -465,16 +471,16 @@ const LandingPage = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden p-[1.5px] bg-gradient-to-br from-primary/40 via-accent/40 to-primary/10"
+            className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden p-[1.5px] bg-blue-500/30"
           >
-            <div className="relative rounded-3xl p-10 md:p-16 bg-[radial-gradient(circle_at_30%_20%,rgba(var(--primary-rgb)/0.25),rgba(var(--surface-rgb)/0.5)_60%)] backdrop-blur-xl border border-white/15">
-              <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-40 bg-[linear-gradient(120deg,rgba(255,255,255,0.08),transparent_60%)]" />
+            <div className="relative rounded-3xl p-10 md:p-16 bg-neutral-900/50 backdrop-blur-xl border border-white/15">
+              <div className="absolute inset-0 pointer-events-none opacity-20 bg-blue-500/5" />
               <div className="text-center relative z-10">
                 <MdOutlineHealthAndSafety className="text-5xl md:text-6xl text-accent mx-auto mb-6 drop-shadow" />
-                <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+                <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight text-heading">
                   Ready To Organize Your Health Information?
                 </h2>
-                <p className="text-secondary text-base md:text-lg mb-10 max-w-2xl mx-auto">
+                <p className="text-secondary text-base md:text-lg mb-10 max-w-2xl mx-auto text-clear">
                   Create your comprehensive health profile today and share it securely with your healthcare providers when needed.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -503,7 +509,7 @@ const LandingPage = () => {
             title="Frequently Asked Questions"
             sub="Have more questions? Reach out after creating an account & we'll help." />
           <div className="max-w-4xl mx-auto space-y-4">
-            {faqList.map((f, i) => (
+            {faqList.map((f) => (
               <FAQItem key={f.question} question={f.question} answer={f.answer} />
             ))}
           </div>

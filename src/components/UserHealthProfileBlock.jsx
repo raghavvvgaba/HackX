@@ -87,7 +87,7 @@ const UserHealthProfileBlock = () => {
     <div className="glass rounded-2xl p-6 border soft-divider hover-glow-primary">
       {/* Header */}
       <div className="flex items-center gap-4 mb-3">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center shadow-lg">
+        <div className="w-14 h-14 rounded-2xl bg-blue-500 text-white flex items-center justify-center shadow-lg">
           <FaUserCircle className="text-xl" />
         </div>
         <div className="flex-1 min-w-0">

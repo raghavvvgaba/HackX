@@ -13,7 +13,7 @@ const ChatMessage = ({ message, isTyping = false }) => {
         <div className={`
           w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 mt-1 shadow-inner ring-1 ring-black/5 dark:ring-0
           ${isUser 
-            ? 'bg-gradient-to-br from-primary to-primary/80 text-white' 
+            ? 'bg-blue-500 text-white' 
             : isEmergency 
               ? 'bg-red-500 text-white'
               : isError
@@ -34,7 +34,7 @@ const ChatMessage = ({ message, isTyping = false }) => {
         <div className={`
           group rounded-2xl sm:rounded-2xl px-3.5 sm:px-4 py-2.5 sm:py-3 border text-[13px] sm:text-sm leading-relaxed shadow-sm transition-colors
           ${isUser 
-            ? 'bg-gradient-to-r from-primary to-primary/80 text-white border-primary/70 shadow-primary/20 shadow-md' 
+            ? 'bg-blue-500 text-white border-blue-500 shadow-blue-500/20 shadow-md' 
             : isEmergency
               ? 'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-700/70'
               : isError

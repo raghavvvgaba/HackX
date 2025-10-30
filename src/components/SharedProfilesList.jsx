@@ -98,7 +98,7 @@ function SharedProfilesList() {
     if (sharedProfiles.length === 0) {
         return (
             <div className="glass-elevated rounded-3xl overflow-hidden">
-                <div className="p-6 border-b soft-divider bg-gradient-to-r from-primary/15 to-accent/15">
+                <div className="p-6 border-b soft-divider bg-blue-500/10">
                     <h2 className="text-xl font-bold text-text">Shared Patient Records</h2>
                 </div>
                 <div className="text-center py-12 px-6">
@@ -112,7 +112,7 @@ function SharedProfilesList() {
 
     return (
     <div className="glass-elevated rounded-3xl overflow-hidden hover-glow-primary">
-            <div className="p-6 border-b soft-divider bg-gradient-to-r from-primary/15 to-accent/15">
+            <div className="p-6 border-b soft-divider bg-blue-500/10">
                 <h2 className="text-lg sm:text-xl font-bold text-text">Shared Patient Records ({sharedProfiles.length})</h2>
             </div>
             <div className="p-4 sm:p-6">
