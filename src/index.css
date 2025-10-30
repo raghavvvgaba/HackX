@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fix overscroll white background issue */
+html,
+body {
+  background-color: var(--color-background);
+  overflow-x: hidden;
+  height: 100%;
+}
+
+/* Prevent overscroll bounce on webkit browsers */
+html {
+  overscroll-behavior: none;
+}
+
+body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Aurora/Mesh gradient background container */
+.aurora-bg {
+  position: relative;
+  isolation: isolate;
+}
+.aurora-bg::before {
+  content: "";
+  position: fixed;
+  inset: -20% -10% -10% -10%;
+  z-index: -2;
+  background: radial-gradient(60% 50% at 20% 20%, rgb(var(--primary-rgb) / 0.35) 0%, transparent 60%),
+              radial-gradient(50% 40% at 80% 10%, rgb(var(--accent-rgb) / 0.32) 0%, transparent 60%),
+              radial-gradient(40% 35% at 70% 80%, rgb(var(--primary-rgb) / 0.28) 0%, transparent 70%),
+              linear-gradient(180deg, rgba(255 255 255 / 0.02), rgba(0 0 0 / 0.02));
+  filter: blur(40px) saturate(160%);
+}
+
+/* Animated aurora layer */
+.aurora-bg::after {
+  content: "";
+  position: fixed;
+  inset: -30% -20% -20% -20%;
+  z-index: -3;
+  background: radial-gradient(45% 45% at 10% 70%, rgb(var(--primary-rgb) / 0.25) 0%, transparent 70%),
+              radial-gradient(50% 50% at 90% 30%, rgb(var(--accent-rgb) / 0.22) 0%, transparent 70%);
+  filter: blur(55px) saturate(160%);
+  animation: auroraMove 28s ease-in-out infinite alternate;
+}
+
+@keyframes auroraMove {
+  0% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(-3%, 2%, 0) scale(1.03); }
+  100% { transform: translate3d(3%, -2%, 0) scale(1.06); }
+}
+
+/* Glass utility with backdrop blur and subtle border */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+/* Variant for elevated glass panels */
+.glass-elevated {
+  background: color-mix(in oklab, var(--glass-bg) 92%, rgb(var(--primary-rgb) / 0.06));
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--glass-border), rgb(var(--primary-rgb) / 0.35));
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+
+/* Soft divider lines suitable for dark/light */
+.soft-divider {
+  border-color: color-mix(in oklab, var(--glass-border), rgba(var(--primary-rgb) / 0.25));
+}
+
+/* Hover glow utilities */
+.hover-glow-primary { transition: box-shadow 200ms, transform 200ms; }
+.hover-glow-primary:hover { box-shadow: 0 8px 24px rgb(var(--primary-rgb) / 0.22), 0 1px 6px rgb(var(--primary-rgb) / 0.16); }
+.hover-glow-accent { transition: box-shadow 200ms, transform 200ms; }
+.hover-glow-accent:hover { box-shadow: 0 8px 24px rgb(var(--accent-rgb) / 0.24), 0 1px 6px rgb(var(--accent-rgb) / 0.18); }
+
+/* Lift and subtle scale */
+.lift-on-hover { transition: transform 220ms ease, box-shadow 220ms ease; }
+.lift-on-hover:hover { transform: translateY(-3px); }
+
+/* Sheen effect */
+.shine-on-hover { position: relative; overflow: hidden; }
+.shine-on-hover::after {
+  content: ""; position: absolute; inset: -150% -50% auto -50%; height: 200%;
+  background: linear-gradient(120deg, transparent 0%, rgb(255 255 255 / 0.035) 20%, rgb(255 255 255 / 0.01) 35%, transparent 60%);
+  transform: rotate(8deg) translate3d(-40%,0,0);
+  transition: transform 600ms ease, opacity 300ms ease; opacity: 0.0; pointer-events: none;
+}
+.shine-on-hover:hover::after { transform: rotate(8deg) translate3d(35%,0,0); opacity: 1; }
+
+/* CTA button with accent gradient + glow */
+.glass-cta { color: white; border-radius: 1rem; background: linear-gradient(90deg, var(--color-accent), color-mix(in oklab, var(--color-accent), black 20%)); box-shadow: 0 8px 22px rgb(var(--accent-rgb) / 0.25); transition: filter 160ms, transform 160ms, box-shadow 160ms; }
+.glass-cta:hover { filter: brightness(1.03); transform: translateY(-1px); box-shadow: 0 10px 28px rgb(var(--accent-rgb) / 0.35); }
+
+/* Ensure root element covers full height */
+#root {
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+/* :root {
+  --text: #020008;
+  --background: #F0F0F0;
+  --primary: #1D719D;
+  --secondary: #2C394C;
+  --accent: #eb743d;
+}
+
+.dark {
+  --text: #efedeb;
+  --background: #000000;
+  --primary: #64dbfc;
+  --secondary: #1c6f9b;
+  --accent: #eb743d;
+} */
+/* button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    var(--color-accent),
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+button:hover::before {
+  opacity: 0.5;
+  transform: translateY(0);
+} */
+
