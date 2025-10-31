@@ -51,7 +51,20 @@ class GeminiService {
   }
 
   isServiceAvailable() {
-    return this.isEnabled && this.model;
+    // Check if all required components are available
+    if (!this.isEnabled) {
+      console.warn('AI Service is disabled in configuration');
+      return false;
+    }
+    if (!this.apiKey) {
+      console.warn('AI Service: No API key configured');
+      return false;
+    }
+    if (!this.model) {
+      console.warn('AI Service: Model not initialized');
+      return false;
+    }
+    return true;
   }
 
   async generateResponse(prompt, context = []) {
@@ -82,16 +95,22 @@ class GeminiService {
       };
     } catch (error) {
       console.error('Error generating AI response:', error);
-      
+
       // Handle specific error types
-      if (error.message?.includes('API_KEY')) {
-        throw new Error('AI service authentication failed. Please check configuration.');
-      } else if (error.message?.includes('RATE_LIMIT')) {
+      const errorMessage = error.message || error.toString();
+
+      if (errorMessage.includes('API_KEY') || errorMessage.includes('403')) {
+        throw new Error('AI service authentication failed. The API key may be invalid or expired.');
+      } else if (errorMessage.includes('CORS') || errorMessage.includes('Failed to fetch')) {
+        throw new Error('Network error: Unable to connect to AI service. This may be due to browser security restrictions.');
+      } else if (errorMessage.includes('404') || errorMessage.includes('Not found')) {
+        throw new Error('AI service endpoint not found. The service may be temporarily unavailable.');
+      } else if (errorMessage.includes('RATE_LIMIT') || errorMessage.includes('429')) {
         throw new Error('AI service is temporarily busy. Please try again in a moment.');
-      } else if (error.message?.includes('SAFETY')) {
+      } else if (errorMessage.includes('SAFETY')) {
         throw new Error('Your request was blocked by safety filters. Please rephrase your question.');
       } else {
-        throw new Error('AI service is currently unavailable. Please try again later.');
+        throw new Error(`AI service error: ${errorMessage}. Please try again later.`);
       }
     }
   }

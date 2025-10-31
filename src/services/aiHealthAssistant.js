@@ -322,9 +322,14 @@ Please don't hesitate to reach out to a medical professional for any health conc
       "🧼 Wash hands frequently to prevent illness"
     ];
   }
+
+  // Check if the service is available
+  isServiceAvailable() {
+    return geminiService.isServiceAvailable();
+  }
 }
 
-// Create singleton instance
+  // Create singleton instance
 const aiHealthAssistant = new AIHealthAssistant();
 
 export default aiHealthAssistant;

@@ -13,17 +13,22 @@ const AIHealthAssistant = ({ isOpen, onClose }) => {
   const [streamingMessage, setStreamingMessage] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [error, setError] = useState(null);
-  
+  const [isAIAvailable, setIsAIAvailable] = useState(true);
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const streamingMessageRef = useRef('');
 
-  // Welcome message
+  // Check AI service availability and set welcome message
   useEffect(() => {
     if (isOpen && messages.length === 0) {
+      // Check if AI service is available
+      const available = aiHealthAssistant.isServiceAvailable?.() || false;
+      setIsAIAvailable(available);
+
       const welcomeMessage = {
         role: 'assistant',
-        content: `👋 Hello! I'm your AI Health Assistant. I'm here to provide general health information and answer your health-related questions.
+        content: available ? `👋 Hello! I'm your AI Health Assistant. I'm here to provide general health information and answer your health-related questions.
 
 **I can help you with:**
 • Understanding medical terms and conditions
@@ -34,10 +39,25 @@ const AIHealthAssistant = ({ isOpen, onClose }) => {
 
 **Please remember:** I provide educational information only and cannot replace professional medical advice. For specific medical concerns, always consult with a healthcare provider.
 
-What would you like to know about health today?`,
+What would you like to know about health today?` : `🤖 **AI Health Assistant - Service Unavailable**
+
+I apologize, but the AI health assistant is currently not configured or experiencing technical issues.
+
+**While I'm unavailable:**
+• Contact your healthcare provider for medical advice
+• Visit reputable health websites (Mayo Clinic, WebMD, CDC)
+• Call emergency services for urgent concerns (911)
+• Schedule an appointment with your doctor
+
+**For general health information:**
+• Check official health organization websites
+• Consult medical encyclopedias
+• Speak with a pharmacist or nurse hotline
+
+The system administrator has been notified. Please try again later.`,
         timestamp: new Date().toISOString(),
-        type: 'welcome',
-        disclaimer: "⚕️ **Medical Disclaimer:** This information is for educational purposes only and should not replace professional medical advice."
+        type: available ? 'welcome' : 'service_unavailable',
+        disclaimer: available ? "⚕️ **Medical Disclaimer:** This information is for educational purposes only and should not replace professional medical advice." : "⚕️ **Medical Disclaimer:** Always consult with qualified healthcare providers for medical advice."
       };
       setMessages([welcomeMessage]);
     }
@@ -60,7 +80,7 @@ What would you like to know about health today?`,
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading || isStreaming) return;
+    if (!inputMessage.trim() || isLoading || isStreaming || !isAIAvailable) return;
 
     const userMessage = {
       role: 'user',
@@ -275,16 +295,24 @@ Error: ${error.message}`,
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask a health question..."
-                className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border border-gray-300 dark:border-white/10 bg-white/80 dark:bg-white/5 text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 dark:focus:ring-indigo-500/40 focus:border-primary/40 dark:focus:border-indigo-400/40 min-h-[44px] max-h-32 shadow-inner"
+                placeholder={isAIAvailable ? "Ask a health question..." : "AI service is unavailable"}
+                className={`w-full px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border resize-none min-h-[44px] max-h-32 shadow-inner ${
+                  isAIAvailable
+                    ? 'border-gray-300 dark:border-white/10 bg-white/80 dark:bg-white/5 text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/30 dark:focus:ring-indigo-500/40 focus:border-primary/40 dark:focus:border-indigo-400/40'
+                    : 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                }`}
                 rows={2}
-                disabled={isLoading || isStreaming}
+                disabled={isLoading || isStreaming || !isAIAvailable}
               />
             </div>
             <button
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || isLoading || isStreaming}
-              className="px-4 sm:px-6 py-3 bg-blue-500 text-white rounded-2xl font-medium hover:bg-blue-600 active:scale-[.97] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 shrink-0 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              disabled={!inputMessage.trim() || isLoading || isStreaming || !isAIAvailable}
+              className={`px-4 sm:px-6 py-3 rounded-2xl font-medium active:scale-[.97] disabled:cursor-not-allowed transition-all flex items-center gap-2 shrink-0 shadow-md focus:outline-none focus:ring-2 ${
+                isAIAvailable
+                  ? 'bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500/40 disabled:opacity-50'
+                  : 'bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed'
+              }`}
             >
               <FaPaperPlane className="text-sm" />
               Send
