@@ -303,15 +303,208 @@ const LandingPage = () => {
   return (
     <>
       <Navbar />
-      <div className="aurora-bg min-h-screen w-full overflow-x-hidden text-white selection:bg-lightBlue/30 selection:text-white">
+      <div className="min-h-screen w-full overflow-x-hidden text-white selection:bg-lightBlue/30 selection:text-white bg-gradient-to-br from-black via-gray-900 to-black">
         {/* ------------------------------ HERO ------------------------------ */}
-        <section className="relative flex flex-col justify-center items-center min-h-[85vh] px-6 pt-20 md:pt-24 pb-10 text-center">
+        <section className="relative flex flex-col justify-center items-center min-h-[85vh] px-6 pt-20 md:pt-24 pb-10 text-center overflow-hidden">
+          {/* Floating Geometric Shapes */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Top left shapes */}
+            <motion.div
+              animate={{
+                y: [0, -20, 0],
+                rotate: [0, 180, 360]
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute top-10 left-10 w-20 h-20 bg-blue-500/10 rounded-full blur-xl"
+            />
+            <motion.div
+              animate={{
+                x: [0, 30, 0],
+                y: [0, -30, 0]
+              }}
+              transition={{
+                duration: 15,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-32 left-20 w-16 h-16 bg-blue-500/15 border border-white/10 rotate-45"
+            />
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, -90, 0]
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-40 left-40 w-12 h-12 bg-white/10 rotate-45"
+            />
+
+            {/* Right side shapes */}
+            <motion.div
+              animate={{
+                y: [0, 40, 0],
+                x: [0, -20, 0]
+              }}
+              transition={{
+                duration: 18,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-20 right-20 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl"
+            />
+            <motion.div
+              animate={{
+                rotate: [0, 360, 0],
+                scale: [1, 0.8, 1]
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute top-48 right-32 w-14 h-14 bg-yellow-500/10 border border-white/5"
+            />
+            <motion.div
+              animate={{
+                y: [0, -25, 0],
+                rotate: [0, -180, 0]
+              }}
+              transition={{
+                duration: 12,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-64 right-16 w-8 h-8 bg-green-500/20 rounded-full"
+            />
+
+            {/* Bottom shapes */}
+            <motion.div
+              animate={{
+                x: [0, 40, 0],
+                y: [0, -20, 0],
+                rotate: [0, 180, 0]
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute bottom-20 right-20 w-32 h-32 bg-gray-600/10 rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{
+                scale: [1, 1.3, 1],
+                rotate: [0, 45, 0]
+              }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute bottom-40 right-40 w-16 h-16 bg-blue-600/15 border border-white/10"
+            />
+            <motion.div
+              animate={{
+                y: [0, 30, 0],
+                rotate: [0, -45, 0]
+              }}
+              transition={{
+                duration: 14,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute bottom-32 left-32 w-20 h-20 bg-white/5 rotate-12"
+            />
+
+            {/* Center scattered shapes */}
+            <motion.div
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.1, 0.3, 0.1]
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-1/3 left-1/4 w-6 h-6 bg-white/10 rounded-full"
+            />
+            <motion.div
+              animate={{
+                rotate: [0, 90, 0],
+                opacity: [0.1, 0.2, 0.1]
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-1/2 right-1/3 w-4 h-4 bg-yellow-400/10"
+            />
+            <motion.div
+              animate={{
+                y: [0, 15, 0],
+                scale: [1, 0.5, 1]
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-2/3 left-1/2 w-8 h-8 bg-white/10 rounded-full blur-sm"
+            />
+
+            {/* Additional small shapes */}
+            <motion.div
+              animate={{
+                rotate: [0, 360, 0]
+              }}
+              transition={{
+                duration: 30,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute top-16 left-1/3 w-3 h-3 border border-white/20 rotate-45"
+            />
+            <motion.div
+              animate={{
+                scale: [1, 2, 1]
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-3/4 left-20 w-2 h-2 bg-blue-400/20 rounded-full"
+            />
+            <motion.div
+              animate={{
+                opacity: [0, 0.3, 0]
+              }}
+              transition={{
+                duration: 7,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute bottom-20 left-1/3 w-10 h-10 bg-green-500/10"
+            />
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-5xl mx-auto w-full"
+            className="max-w-5xl mx-auto w-full relative z-10"
           >
+            {/* Glass container for hero content */}
+            <div className="glass p-12 md:p-16 rounded-3xl backdrop-blur-sm bg-white/5 border border-white/10">
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -360,6 +553,7 @@ const LandingPage = () => {
                 Explore Features
               </a>
             </motion.div>
+            </div>
           </motion.div>
 
           {/* Minimal Scroll Arrow */}
