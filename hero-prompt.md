@@ -1,4 +1,0 @@
-Based on the image, here's the detailed prompt for creating a similar hero section:
-
-**Prompt:**
-"Create a modern hero section with a subtle gradient background transitioning from deep purple/indigo at the top to slightly lighter tones toward the bottom. Scatter 15-20 floating geometric shapes (circles, squares, triangles, hexagons) of various sizes across the background. These shapes should be semi-transparent with blur effects, creating depth. The shapes should use colors from the existing palette - primary purples, blues, and accent colors with low opacity (0.1-0.3). Position some shapes in the top-left corner, some scattered around the center edges, and a few in the bottom-right area. Add subtle animation to make the shapes float slowly. The hero content should be centered with a compelling headline, descriptive subheading, and primary call-to-action button. Maintain the glass-morphism theme with a glass container for the text content."
