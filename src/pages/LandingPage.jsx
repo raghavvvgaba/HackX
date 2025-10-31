@@ -153,7 +153,7 @@ const SectionHeading = ({ eyebrow, title, sub }) => (
       initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="text-3xl md:text-4xl font-bold text-heading"
+      className="text-2xl md:text-4xl lg:text-5xl font-bold text-brand"
     >
 
 
@@ -181,9 +181,9 @@ const FeatureCard = ({ feature, idx }) => {
       transition={{ duration: 0.55, delay: idx * 0.08 }}
       className="relative group rounded-2xl p-6 md:p-7 glass-elevated lift-on-hover shine-on-hover overflow-hidden"
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-blue-500/5" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-darkBlue/5" />
       <div className="flex items-center gap-4 mb-4 relative z-10">
-        <span className="flex items-center justify-center w-14 h-14 rounded-xl bg-blue-500/10 shadow-inner border border-white/10">
+        <span className="flex items-center justify-center w-14 h-14 rounded-xl bg-darkBlue/10 shadow-inner border border-white/10">
           {feature.icon}
         </span>
         <h3 className="text-xl font-semibold text-text dark:text-white">
@@ -211,28 +211,64 @@ const FeatureCard = ({ feature, idx }) => {
   );
 };
 
-const JourneyStep = ({ step, index }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.5 }}
-    transition={{ duration: 0.55, delay: index * 0.1 }}
-    className="relative flex flex-col gap-4 p-6 rounded-2xl glass-elevated lift-on-hover"
-  >
-    <div className="flex items-center gap-4">
-      <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-blue-500/15 text-accent text-xl font-bold border border-white/10 shadow-inner">
-        {step.icon}
-      </div>
-      <div>
-        <h4 className="font-semibold text-lg">{step.title}</h4>
-        <p className="text-secondary text-sm mt-1">{step.text}</p>
-      </div>
-    </div>
-    <span className="absolute -top-3 -right-3 text-[11px] px-2 py-1 rounded-full bg-blue-500/20 backdrop-blur-md border border-white/10 text-white/90 font-semibold shadow">
-      {index + 1}
-    </span>
-  </motion.div>
-);
+const JourneyStep = ({ step, index }) => {
+  const isEven = index % 2 === 0;
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 0.6, delay: index * 0.12 }}
+      className={`relative flex flex-col items-center w-full ${isEven ? '' : 'lg:flex-col-reverse'}`}
+    >
+      {/* Text content */}
+      <motion.div
+        initial={{ opacity: 0, y: isEven ? -10 : 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: index * 0.12 + 0.1 }}
+        className={`w-full max-w-xs text-center ${isEven ? 'mb-6 lg:mb-6' : 'mb-6 lg:mb-0 lg:mt-6'}`}
+      >
+        <h4 className="text-lg lg:text-xl font-bold text-white mb-3 leading-tight">
+          {step.title}
+        </h4>
+        <p className="text-secondary text-sm lg:text-base leading-relaxed">
+          {step.text}
+        </p>
+      </motion.div>
+
+      {/* Icon Circle */}
+      <motion.div
+        initial={{ scale: 0 }}
+        whileInView={{ scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: index * 0.12 + 0.2, type: "spring", stiffness: 250 }}
+        className="relative z-10 flex-shrink-0"
+      >
+        <div className="relative w-16 h-16 lg:w-20 lg:h-20">
+          {/* Minimal glow ring */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 rounded-full bg-gradient-to-r from-darkBlue via-brand to-darkBlue opacity-20"
+          />
+          
+          {/* Main circle with darkBlue */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-darkBlue/30 to-darkBlue/10 border-2 border-darkBlue/50 backdrop-blur-md flex items-center justify-center shadow-lg shadow-darkBlue/15">
+            <motion.div
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 2, repeat: Infinity, delay: index * 0.15 }}
+              className="text-2xl lg:text-3xl text-darkBlue"
+            >
+              {step.icon}
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const TestimonialCard = ({ t, idx }) => (
   <motion.div
@@ -242,7 +278,7 @@ const TestimonialCard = ({ t, idx }) => (
     transition={{ duration: 0.55, delay: idx * 0.08 }}
     className="relative rounded-2xl p-6 glass-elevated shine-on-hover"
   >
-    <div className="absolute inset-0 rounded-2xl bg-blue-500/10 opacity-40" />
+    <div className="absolute inset-0 rounded-2xl bg-darkBlue/10 opacity-40" />
     <div className="relative">
       <p className="text-sm md:text-base text-text/90 dark:text-white/90 leading-relaxed italic">
         "{t.quote}"
@@ -312,15 +348,44 @@ const LandingPage = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="max-w-5xl mx-auto w-full"
           >
-            <motion.span
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-xs tracking-widest font-semibold text-yellow-400 mb-6 sm:mb-8"
+              className="mb-6 sm:mb-8"
             >
-              <FaLock className="text-yellow-400" />
-              Secure • Share • Thrive
-            </motion.span>
+              <div className="relative inline-block">
+                {/* Animated glow background */}
+                <motion.div
+                  animate={{
+                    boxShadow: [
+                      "0 0 20px rgba(0, 212, 255, 0.3)",
+                      "0 0 40px rgba(0, 212, 255, 0.6)",
+                      "0 0 20px rgba(0, 212, 255, 0.3)",
+                    ],
+                  }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="absolute inset-0 rounded-full"
+                />
+                
+                {/* Main badge */}
+                <motion.span
+                  className="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full border border-accent/60 text-xs sm:text-sm md:text-base tracking-widest font-semibold text-accent backdrop-blur-sm glass relative z-10"
+                  whileHover={{ scale: 1.05, borderColor: "rgba(0, 212, 255, 1)" }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  {/* Live indicator dot */}
+                  <motion.span
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-accent shadow-lg"
+                  />
+                  
+                  {/* Text */}
+                  <span>Secure • Share • Thrive</span>
+                </motion.span>
+              </div>
+            </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -329,7 +394,7 @@ const LandingPage = () => {
               className="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-6 sm:mb-8 tracking-tight"
             >
               <span className="text-white">Your Complete Health Profile, </span>
-              <span className="text-lightBlue">Digitized</span>
+              <span className="text-brand">Digitized</span>
             </motion.h1>
 
             <motion.p
@@ -347,50 +412,31 @@ const LandingPage = () => {
               transition={{ delay: 0.5, duration: 0.7 }}
               className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-10 sm:mb-12"
             >
-              <button
+              <motion.button
                 onClick={handleGetStarted}
-                className="px-8 sm:px-10 py-3.5 sm:py-4 bg-darkBlue text-white font-semibold rounded-lg hover:bg-opacity-90 transition-all active:scale-[0.97] whitespace-nowrap shadow-lg hover:shadow-xl"
+                className="px-8 sm:px-10 py-3.5 sm:py-4 bg-darkBlue text-white font-semibold rounded-lg transition-all active:scale-[0.97] whitespace-nowrap shadow-md"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
                 {user ? "Go to Dashboard" : "Get Started Free"}
-              </button>
-              <a
+              </motion.button>
+              <motion.a
                 href="#features"
-                className="px-8 sm:px-10 py-3.5 sm:py-4 border border-white/30 text-white font-semibold rounded-lg hover:border-white/60 hover:bg-white/5 transition-all whitespace-nowrap"
+                className="px-8 sm:px-10 py-3.5 sm:py-4 border border-white/30 text-white font-semibold rounded-lg hover:border-white/60 transition-all whitespace-nowrap shadow-md"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
                 Explore Features
-              </a>
+              </motion.a>
             </motion.div>
           </motion.div>
 
-          {/* Minimal Scroll Arrow */}
-          <motion.button
-            type="button"
-            onClick={() => {
-              const el = document.getElementById("features");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.55 }}
-            className="absolute bottom-6 sm:bottom-8 w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all border border-white/20"
-            aria-label="Scroll to features"
-          >
-            <svg
-              className="w-5 h-5 animate-bounce"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </motion.button>
+
         </section>
 
         {/* ------------------------------ FEATURE GRID ------------------------------ */}
         <section id="features" className="relative py-24 px-6">
           <SectionHeading
-            eyebrow="Capabilities"
             title="Why Choose VitalLink?"
             sub="Everything you need to create, manage & securely share your health information with healthcare providers."
           />
@@ -406,9 +452,9 @@ const LandingPage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative rounded-2xl p-8 md:p-10 flex flex-col justify-between overflow-hidden glass-elevated col-span-full xl:col-span-1"
             >
-              <div className="absolute inset-0 bg-blue-500/5" />
+              <div className="absolute inset-0 bg-darkBlue/5" />
               <div className="relative">
-                <h3 className="text-2xl font-bold mb-4 text-text dark:text-white flex items-center gap-3">
+                <h3 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
                   <FaLock className="text-accent" /> Built on Security
                 </h3>
                 <p className="text-secondary text-sm md:text-base leading-relaxed mb-6">
@@ -416,7 +462,7 @@ const LandingPage = () => {
                 </p>
                 <ul className="grid grid-cols-1 gap-3 text-sm">
                   {["Firebase Authentication", "Role-based access control", "Encrypted data transmission", "Secure sharing permissions"].map((p) => (
-                    <li key={p} className="flex items-center gap-2 text-text/90 dark:text-white/90">
+                    <li key={p} className="flex items-center gap-2 text-white/90">
                       <span className="w-1.5 h-1.5 rounded-full bg-accent" /> {p}
                     </li>
                   ))}
@@ -437,23 +483,72 @@ const LandingPage = () => {
         </section>
 
         {/* ------------------------------ JOURNEY / HOW IT WORKS ------------------------------ */}
-        <section className="relative py-28 px-6">
+        <section className="relative py-32 md:py-40 px-6">
           <SectionHeading
-            eyebrow="Workflow"
             title="Simple & Secure Health Management"
             sub="A straightforward process to create, maintain and share your health profile with healthcare providers."
           />
-          <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {journeySteps.map((s, i) => (
-              <JourneyStep key={s.title} step={s} index={i} />
-            ))}
+          <div className="max-w-7xl mx-auto">
+            <div className="relative py-16">
+              {/* Connecting Lines - Desktop */}
+              <div className="hidden lg:block absolute top-0 left-0 right-0 h-full pointer-events-none">
+                {/* Line 1→2 (vertical down) */}
+                <motion.div
+                  initial={{ scaleY: 0, opacity: 0 }}
+                  whileInView={{ scaleY: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="absolute left-1/4 top-20 w-0.5 h-32 origin-top"
+                  style={{
+                    background: 'linear-gradient(to bottom, var(--color-dark-blue), var(--color-brand), transparent)',
+                    boxShadow: '0 0 20px rgba(5, 48, 173, 0.4)'
+                  }}
+                />
+
+                {/* Line 2→3 (horizontal right) */}
+                <motion.div
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  whileInView={{ scaleX: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  className="absolute left-1/4 top-1/2 h-0.5 w-1/2 origin-left"
+                  style={{
+                    background: 'linear-gradient(to right, transparent, var(--color-dark-blue), var(--color-brand), transparent)',
+                    boxShadow: '0 0 20px rgba(5, 48, 173, 0.4)'
+                  }}
+                />
+
+                {/* Line 3→4 (vertical down) */}
+                <motion.div
+                  initial={{ scaleY: 0, opacity: 0 }}
+                  whileInView={{ scaleY: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                  className="absolute right-1/4 top-1/2 w-0.5 h-32 origin-top"
+                  style={{
+                    background: 'linear-gradient(to bottom, transparent, var(--color-brand), var(--color-dark-blue))',
+                    boxShadow: '0 0 20px rgba(5, 48, 173, 0.4)'
+                  }}
+                />
+              </div>
+
+              {/* Grid of steps */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 relative z-10">
+                {journeySteps.map((s, i) => (
+                  <JourneyStep 
+                    key={s.title} 
+                    step={s} 
+                    index={i}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
         {/* ------------------------------ TESTIMONIALS ------------------------------ */}
         <section className="relative py-24 px-6">
           <SectionHeading
-            eyebrow="Voices"
             title="Trusted By Patients & Healthcare Providers"
             sub="Real experiences from people using VitalLink to manage their health information."
           />
@@ -471,13 +566,13 @@ const LandingPage = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden p-[1.5px] bg-blue-500/30"
+            className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden p-[1.5px] bg-darkBlue/30"
           >
             <div className="relative rounded-3xl p-10 md:p-16 bg-neutral-900/50 backdrop-blur-xl border border-white/15">
-              <div className="absolute inset-0 pointer-events-none opacity-20 bg-blue-500/5" />
+              <div className="absolute inset-0 pointer-events-none opacity-20 bg-darkBlue/5" />
               <div className="text-center relative z-10">
                 <MdOutlineHealthAndSafety className="text-5xl md:text-6xl text-accent mx-auto mb-6 drop-shadow" />
-                <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight text-heading">
+                <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight text-brand">
                   Ready To Organize Your Health Information?
                 </h2>
                 <p className="text-secondary text-base md:text-lg mb-10 max-w-2xl mx-auto text-clear">
@@ -492,7 +587,7 @@ const LandingPage = () => {
                   </button>
                   <a
                     href="#faq"
-                    className="px-8 py-4 rounded-xl font-semibold text-sm md:text-base bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/20 hover:bg-white/90 dark:hover:bg-white/10 transition-colors text-text dark:text-white lift-on-hover"
+                    className="px-8 py-4 rounded-xl font-semibold text-sm md:text-base bg-white/5 backdrop-blur-md border border-white/20 hover:bg-white/10 transition-colors text-white lift-on-hover"
                   >
                     Questions?
                   </a>
@@ -504,14 +599,35 @@ const LandingPage = () => {
 
         {/* ------------------------------ FAQ ------------------------------ */}
         <section id="faq" className="relative py-24 px-6">
-          <SectionHeading
-            eyebrow="Answers"
-            title="Frequently Asked Questions"
-            sub="Have more questions? Reach out after creating an account & we'll help." />
-          <div className="max-w-4xl mx-auto space-y-4">
-            {faqList.map((f) => (
-              <FAQItem key={f.question} question={f.question} answer={f.answer} />
-            ))}
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
+              {/* Left Column - Heading (Takes ~2 columns) */}
+              <div className="lg:col-span-2 flex flex-col justify-start">
+                <motion.h2
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-2xl md:text-4xl lg:text-5xl font-bold text-brand mb-4"
+                >
+                  Frequently Asked Questions
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="mt-4 text-base md:text-lg text-secondary"
+                >
+                  Have more questions? Reach out after creating an account & we'll help.
+                </motion.p>
+              </div>
+              
+              {/* Right Column - FAQ Items (Takes ~3 columns) */}
+              <div className="lg:col-span-3 space-y-4">
+                {faqList.map((f) => (
+                  <FAQItem key={f.question} question={f.question} answer={f.answer} />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 

@@ -143,9 +143,9 @@ export default function Login() {
           <div className="relative z-10 mb-8">
             <div className="relative">
               {/* Medical Cross Background */}
-              <div className="w-48 h-48 bg-blue-500 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-6">
+              <div className="w-48 h-48 bg-darkBlue rounded-3xl flex items-center justify-center shadow-2xl transform rotate-6">
                 <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center">
-                  <FaHeartbeat className="text-6xl text-primary" />
+                  <FaHeartbeat className="text-6xl text-darkBlue" />
                 </div>
               </div>
               
@@ -170,7 +170,7 @@ export default function Login() {
 
           {/* Feature List */}
           <div className="space-y-6 text-center max-w-md">
-            <h1 className="text-4xl font-bold text-primary mb-2">Welcome to VitalLink</h1>
+            <h1 className="text-4xl font-bold text-darkBlue mb-2">Welcome to VitalLink</h1>
             <p className="text-lg text-text/80 mb-8">Your comprehensive healthcare management platform</p>
           </div>
         </motion.div>
@@ -186,38 +186,38 @@ export default function Login() {
             {/* Mobile Header */}
             <div className="lg:hidden text-center mb-8">
               <motion.div 
-                className="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+                className="w-20 h-20 bg-darkBlue rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, type: "spring" }}
               >
                 <FaHeartbeat className="text-3xl text-white" />
               </motion.div>
-              <h1 className="text-2xl font-bold text-primary">VitalLink</h1>
+              <h1 className="text-2xl font-bold text-darkBlue">VitalLink</h1>
               <p className="text-text/70">Welcome back to your account</p>
             </div>
 
             <motion.form
               onSubmit={handleLogin}
-              className="bg-white/90 dark:bg-white/5 backdrop-blur-xl border border-accent-40 p-8 rounded-3xl shadow-2xl dark:shadow-white/5 space-y-6"
+              className="bg-white/5 backdrop-blur-xl border border-accent-40 p-8 rounded-3xl shadow-2xl space-y-6"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
               <div className="text-center mb-6">
-                <h2 className="text-3xl lg:text-3xl font-bold text-primary">Welcome Back</h2>
+                <h2 className="text-3xl lg:text-3xl font-bold text-darkBlue">Welcome Back</h2>
                 <p className="text-text/70 mt-2">Choose your account type and login</p>
               </div>
 
               {/* Role Selection */}
-              <div className="grid grid-cols-3 gap-2 p-2 bg-gray-100/80 dark:bg-white/5 rounded-2xl backdrop-blur-sm">
+              <div className="grid grid-cols-3 gap-2 p-2 bg-white/5 rounded-2xl backdrop-blur-sm">
                 <button
                   type="button"
                   onClick={() => handleRoleSelect("user")}
                   className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
                     form.role === "user"
-                      ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
-                      : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
+                      ? "bg-white/10 text-darkBlue shadow-lg shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
+                      : "text-text/70 hover:text-darkBlue hover:bg-white/5"
                   }`}
                 >
                   <FaUserAlt className="text-base" />
@@ -228,8 +228,8 @@ export default function Login() {
                   onClick={() => handleRoleSelect("doctor")}
                   className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
                     form.role === "doctor"
-                      ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
-                      : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
+                      ? "bg-white/10 text-darkBlue shadow-lg shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
+                      : "text-text/70 hover:text-darkBlue hover:bg-white/5"
                   }`}
                 >
                   <FaUserMd className="text-base" />
@@ -240,8 +240,8 @@ export default function Login() {
                   onClick={() => handleRoleSelect("hospital_admin")}
                   className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
                     form.role === "hospital_admin"
-                      ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
-                      : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
+                      ? "bg-white/10 text-darkBlue shadow-lg shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
+                      : "text-text/70 hover:text-darkBlue hover:bg-white/5"
                   }`}
                 >
                   <FaHospital className="text-base" />
@@ -274,7 +274,7 @@ export default function Login() {
                     required
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-4 bg-gray-50/80 dark:bg-white/5 border border-gray-200/60 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:border dark:focus:border-[var(--color-primary)] transition-all backdrop-blur-sm"
+                    className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all backdrop-blur-sm"
                   />
                 </div>
               </div>
@@ -293,12 +293,12 @@ export default function Login() {
                     required
                     value={form.password}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-12 py-4 bg-gray-50/80 dark:bg-white/5 border border-gray-200/60 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:border dark:focus:border-[var(--color-primary)] transition-all backdrop-blur-sm"
+                    className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all backdrop-blur-sm"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text/50 hover:text-primary transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text/50 hover:text-darkBlue transition-colors"
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -307,7 +307,7 @@ export default function Login() {
 
               <motion.button
                 type="submit"
-                className="w-full bg-primary text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="w-full bg-darkBlue text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -317,7 +317,7 @@ export default function Login() {
               <div className="text-center pt-4">
                 <p className="text-text/70">
                   Don't have an account?{" "}
-                  <Link to="/signup" className="text-primary font-semibold hover:underline transition-all">
+                  <Link to="/signup" className="text-darkBlue font-semibold hover:underline transition-all">
                     Create Account
                   </Link>
                 </p>

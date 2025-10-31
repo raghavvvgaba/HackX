@@ -2,7 +2,6 @@ import plugin from 'tailwindcss/plugin';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -16,6 +15,8 @@ export default {
         'light-text': 'var(--color-text)',
         'light-secondary': 'var(--color-secondary)',
         'light-heading': 'var(--color-heading)',
+        button: 'var(--color-button)',
+        brand: 'var(--color-brand)',
       },
       backgroundColor: {
         dark: 'var(--color-background)',
@@ -64,6 +65,13 @@ export default {
           white: '#FFFFFF',
         },
         
+        // Button color unified across the site
+        button: {
+          DEFAULT: '#0052A3',
+          hover: '#003d7a',
+          light: '#0066CC',
+        },
+        
         accent: {
           DEFAULT: "var(--color-accent)",
           10: "rgba(0, 212, 255, 0.1)",
@@ -103,12 +111,15 @@ export default {
           '--color-primary': '#0088FF',        // Primary brand blue
           '--color-light-blue': '#5BA3FF',     // Light blue
           '--color-dark-blue': '#0052A3',      // Dark blue
+          '--color-button': '#0052A3',         // Unified button color
+          '--color-brand': '#0530ad',          // VitalLink brand color
           '--color-accent': '#00D4FF',         // Cyan accent
           
           // RGB variants for alpha blending
           '--primary-rgb': '0 136 255',
           '--accent-rgb': '0 212 255',
           '--surface-rgb': '255 255 255',
+          '--button-rgb': '5 48 173',
           
           // Glass variables
           '--glass-bg': 'rgba(255, 255, 255, 0.75)',
@@ -130,12 +141,15 @@ export default {
           '--color-primary': '#0088FF',        // Primary brand blue
           '--color-light-blue': '#5BA3FF',     // Light blue
           '--color-dark-blue': '#0052A3',      // Dark blue for strong contrast
+          '--color-button': '#0052A3',         // Unified button color
+          '--color-brand': '#0530ad',          // VitalLink brand color
           '--color-accent': '#00D4FF',         // Shiny cyan accent
           
           // RGB variants for alpha blending
           '--primary-rgb': '0 136 255',
           '--accent-rgb': '0 212 255',
           '--surface-rgb': '17 24 39',
+          '--button-rgb': '5 48 173',
           
           // Glass variables
           '--glass-bg': 'rgba(17, 24, 39, 0.4)',
