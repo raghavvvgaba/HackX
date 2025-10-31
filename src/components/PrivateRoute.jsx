@@ -13,7 +13,7 @@ export default function PrivateRoute({ children, requiredRole }) {
         // Redirect based on their actual role
         if (userRole === "doctor") {
             return <Navigate to='/doctor' />;
-        } else if (userRole === "hospital_admin") {
+        } else if (userRole === "hospital") {
             return <Navigate to='/hospital' />;
         } else if (userRole === "user") {
             return <Navigate to='/user' />;

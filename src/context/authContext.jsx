@@ -3,6 +3,23 @@ import { auth, db } from "../config/firebase";
 import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { generateUniqueDoctorId } from "../utils/firestoreDoctorService";
+import { saveHospitalData } from "../services/hospitalService";
+
+// Function to generate unique hospital ID
+const generateUniqueHospitalId = async () => {
+  // Generate hospital ID with format: HOS-XXXX-0000
+  const letters = 'BCDFGHJKLMNPQRSTVWXYZ'; // Remove ambiguous vowels
+  const getRandomLetters = (length) => {
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    return result;
+  };
+
+  const hospitalId = `HOS-${getRandomLetters(4)}-${Math.floor(1000 + Math.random() * 9000)}`;
+  return hospitalId;
+};
 
 const AuthContext = createContext();
 
@@ -13,19 +30,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for mock mode (hospital admin)
-    const mockMode = localStorage.getItem('mockMode');
-    const mockHospitalUser = localStorage.getItem('mockHospitalUser');
-    
-    if (mockMode === 'true' && mockHospitalUser) {
-      // Mock mode active - use mock user
-      const mockUser = JSON.parse(mockHospitalUser);
-      setUser(mockUser);
-      setUserRole('hospital_admin');
-      setUserProfile(mockUser);
-      setLoading(false);
-      return;
-    }
+    // Mock mode removed - using real authentication only
     
     // Regular Firebase auth
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -51,22 +56,44 @@ export const AuthProvider = ({ children }) => {
       if (userDoc.exists()) {
         const userData = userDoc.data();
         setUserRole(userData.role);
-        
-        // Also fetch profile data from userProfile collection
-        const profileDocRef = doc(db, "userProfile", uid);
-        const profileDoc = await getDoc(profileDocRef);
-        if (profileDoc.exists()) {
-          setUserProfile({
-            ...userData, // Include users collection data
-            ...profileDoc.data(), // Include userProfile collection data
-          });
+
+        // Set basic user profile immediately to avoid undefined
+        setUserProfile(userData);
+
+        if (userData.role === 'hospital') {
+          // For hospitals, fetch data from hospitals collection
+          if (userData.hospitalId) {
+            const hospitalDocRef = doc(db, "hospitals", userData.hospitalId);
+            const hospitalDoc = await getDoc(hospitalDocRef);
+            if (hospitalDoc.exists()) {
+              // Update with full hospital data
+              setUserProfile(prev => ({
+                ...prev,
+                ...hospitalDoc.data()
+              }));
+            } else {
+              console.error("No hospital document found for ID:", userData.hospitalId);
+              // Hospital document doesn't exist, use basic data from users collection
+              console.log("Using basic user data for hospital");
+            }
+          }
         } else {
-          // No profile data yet, but include onboardingCompleted status from users
-          setUserProfile(userData);
+          // For users and doctors, fetch from userProfile collection
+          const profileDocRef = doc(db, "userProfile", uid);
+          const profileDoc = await getDoc(profileDocRef);
+          if (profileDoc.exists()) {
+            // Update with full profile data
+            setUserProfile(prev => ({
+              ...prev,
+              ...profileDoc.data()
+            }));
+          }
         }
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
+      // Still set basic user data on error
+      setUserProfile({ role: 'unknown', uid });
     }
   };
 
@@ -78,12 +105,15 @@ export const AuthProvider = ({ children }) => {
       // Step 2: Update Firebase profile
       await updateProfile(userCredential.user, { displayName: name });
       
-      // Step 3: Generate doctor ID if the user is a doctor
+      // Step 3: Generate doctor ID if the user is a doctor, or hospital ID if hospital
       let doctorId = null;
+      let hospitalId = null;
       if (role === "doctor") {
         doctorId = await generateUniqueDoctorId();
+      } else if (role === "hospital") {
+        hospitalId = await generateUniqueHospitalId();
       }
-      
+
       // Step 4: Store user data in Firestore
       const userDocRef = doc(db, "users", userCredential.user.uid);
       const userData = {
@@ -93,21 +123,64 @@ export const AuthProvider = ({ children }) => {
         createdAt: new Date().toISOString(),
         onboardingCompleted: false, // Add this field for new users
       };
-      
+
       // Add doctor ID if user is a doctor
       if (doctorId) {
         userData.doctorId = doctorId;
       }
+
+      // Add hospital ID if user is a hospital
+      if (hospitalId) {
+        userData.hospitalId = hospitalId;
+      }
       
       await setDoc(userDocRef, userData);
-      
-      // Update local state  
+
+      // If user is a hospital, also save to hospitals collection
+      if (role === 'hospital' && hospitalId) {
+        const hospitalData = {
+          uid: userCredential.user.uid,
+          name,
+          email,
+          // Additional hospital fields can be added during onboarding
+          address: '',
+          phone: '',
+          type: 'General Hospital', // Can be updated later
+          specialties: [],
+          departments: [],
+          capacity: 0,
+          onboardingCompleted: false, // Add this field
+        };
+
+        console.log('Creating hospital document with ID:', hospitalId);
+        const hospitalResult = await saveHospitalData(hospitalId, hospitalData);
+        if (hospitalResult.success) {
+          console.log('Hospital document created successfully');
+        } else {
+          console.error('Error saving hospital data:', hospitalResult.error);
+          // Note: We don't throw error here to avoid blocking signup
+        }
+      }
+
+      // Update local state immediately after signup
       setUserRole(role);
       setUserProfile({
         ...userData,
         onboardingCompleted: false // Will be updated when onboarding is complete
       });
-      
+
+      // If hospital, also fetch the hospital data we just saved
+      if (role === 'hospital' && hospitalId) {
+        const { getHospitalByUid } = await import('../services/hospitalService');
+        const hospitalResult = await getHospitalByUid(userCredential.user.uid);
+        if (hospitalResult.success) {
+          setUserProfile(prev => ({
+            ...prev,
+            ...hospitalResult.data
+          }));
+        }
+      }
+
       return userCredential;
     } catch (error) {
       console.error("Signup error:", error);
@@ -126,19 +199,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    // Check if in mock mode
-    const mockMode = localStorage.getItem('mockMode');
-    if (mockMode === 'true') {
-      // Clear mock mode
-      localStorage.removeItem('mockMode');
-      localStorage.removeItem('mockHospitalUser');
-      setUser(null);
-      setUserRole(null);
-      setUserProfile(null);
-      return;
-    }
-    
-    // Regular Firebase logout
+    // Firebase logout
     await signOut(auth);
     setUser(null);
     setUserRole(null);

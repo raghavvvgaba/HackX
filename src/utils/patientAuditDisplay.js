@@ -1,5 +1,5 @@
 import { getPatientAuditTrail } from '../services/auditService';
-import { formatAuditEventForDisplay } from '../utils/fhirAuditEvent';
+import { formatAuditEventForDisplay } from './fhirAuditEvent.js';
 
 /**
  * Gets formatted audit logs for a patient's dashboard

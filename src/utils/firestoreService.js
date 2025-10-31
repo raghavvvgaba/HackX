@@ -117,45 +117,92 @@ export async function editUserProfile(userId, profileData) {
  * @param {string} doctorIdCode - The doctor's human-readable ID (DR-XXXX-1234)
  * @returns {Promise<Object>} - Success/error result
  */
-export async function shareProfileWithDoctor(patientId, doctorIdCode) {
+export async function shareProfileWithDoctor(patientId, recipientIdCode) {
   try {
-    // First, find the doctor by their public ID code
-    const doctorData = await findDoctorByDoctorId(doctorIdCode);
-    
-    if (!doctorData) {
-      return { success: false, error: "Doctor not found. Please check the Doctor ID and try again." };
+    // Check if it's a doctor or hospital ID
+    const isHospital = recipientIdCode.startsWith('HOS-');
+    let recipientData = null;
+
+    if (isHospital) {
+      // Find hospital by their ID
+      recipientData = await findHospitalByHospitalId(recipientIdCode);
+
+      if (!recipientData) {
+        return { success: false, error: "Hospital not found. Please check the Hospital ID and try again." };
+      }
+    } else {
+      // Find doctor by their ID
+      recipientData = await findDoctorByDoctorId(recipientIdCode);
+
+      if (!recipientData) {
+        return { success: false, error: "Doctor not found. Please check the Doctor ID and try again." };
+      }
     }
-    
-    const doctorId = doctorData.id; // This is the Firebase UID
-    
+
+    const recipientId = recipientData.uid || recipientData.id; // Firebase UID
+
     // Use predictable ID format for better security and rule enforcement
-    const shareId = `${doctorId}_${patientId}`;
-    
+    const shareId = `${recipientId}_${patientId}`;
+
     // Check if already shared
     const existingShareRef = doc(db, "shared_profiles", shareId);
     const existingShare = await getDoc(existingShareRef);
-    
+
     if (existingShare.exists() && existingShare.data().status === 'active') {
-      return { success: false, error: "Profile already shared with this doctor." };
+      const recipientType = isHospital ? 'Hospital' : 'Doctor';
+      return { success: false, error: `Profile already shared with this ${recipientType.toLowerCase()}.` };
     }
-    
+
     // Create a share record in a "shared_profiles" collection
     const shareData = {
       patientId,
-      doctorId,
-      doctorIdCode,
-      doctorName: doctorData.name || 'Unknown Doctor',
+      recipientId, // Changed from doctorId to recipientId
+      recipientIdCode, // Changed from doctorIdCode
+      recipientName: recipientData.name || 'Unknown',
+      recipientType: isHospital ? 'hospital' : 'doctor', // Add recipient type
       sharedAt: serverTimestamp(),
       status: 'active' // active, revoked, expired
     };
-    
+
     const shareRef = doc(db, "shared_profiles", shareId);
     await setDoc(shareRef, shareData);
-    
-    return { success: true, shareId, doctorName: doctorData.name };
+
+    return {
+      success: true,
+      shareId,
+      recipientName: recipientData.name,
+      recipientType: isHospital ? 'hospital' : 'doctor'
+    };
   } catch (error) {
-    console.error("Error sharing profile with doctor:", error);
+    console.error("Error sharing profile:", error);
     return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Find hospital by hospital ID code
+ * @param {string} hospitalIdCode - The hospital's public ID code (e.g., HOS-MEDC-5678)
+ * @returns {Promise<Object|null>} - Hospital data or null if not found
+ */
+async function findHospitalByHospitalId(hospitalIdCode) {
+  try {
+    const hospitalsRef = collection(db, "hospitals");
+    const q = query(hospitalsRef, where("hospitalId", "==", hospitalIdCode), where("isActive", "==", true));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const hospitalDoc = querySnapshot.docs[0];
+      return {
+        id: hospitalDoc.id,
+        uid: hospitalDoc.data().uid,
+        ...hospitalDoc.data()
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error finding hospital by ID:", error);
+    return null;
   }
 }
 

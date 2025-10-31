@@ -19,7 +19,7 @@ export default function Signup() {
         if (!loading && user && userRole) {
             if (userRole === 'doctor') {
                 navigate('/doctor');
-            } else if (userRole === 'hospital_admin') {
+            } else if (userRole === 'hospital') {
                 navigate('/hospital');
             } else {
                 navigate('/user');
@@ -95,7 +95,7 @@ export default function Signup() {
             let destination = '/user/onboarding';
             if (form.role === 'doctor') {
                 destination = '/doctor';
-            } else if (form.role === 'hospital_admin') {
+            } else if (form.role === 'hospital') {
                 destination = '/hospital/onboarding';
             }
             setTimeout(() => {
@@ -243,9 +243,9 @@ export default function Signup() {
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={() => handleRoleSelect("hospital_admin")}
+                                    onClick={() => handleRoleSelect("hospital")}
                                     className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
-                                        form.role === "hospital_admin"
+                                        form.role === "hospital"
                                             ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
                                             : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
                                     }`}
@@ -360,7 +360,7 @@ export default function Signup() {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                Create {form.role === "doctor" ? "Doctor" : form.role === "hospital_admin" ? "Hospital" : "Patient"} Account
+                                Create {form.role === "doctor" ? "Doctor" : form.role === "hospital" ? "Hospital" : "Patient"} Account
                             </motion.button>
 
                             <div className="text-center pt-4">

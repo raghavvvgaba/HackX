@@ -3,6 +3,7 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { getPatientMedicalRecords } from '../utils/firestoreService';
+import { exportPatientFHIRData } from '../utils/fhirExport';
 import { FaFileMedicalAlt, FaRedo, FaExclamationTriangle, FaSpinner, FaDownload, FaEye } from 'react-icons/fa';
 
 const MedicalHistoryPage = () => {
@@ -15,6 +16,7 @@ const MedicalHistoryPage = () => {
   const [lastDoc, setLastDoc] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   // Aggressive scroll reset - multiple attempts to ensure it works
   useLayoutEffect(() => {
@@ -91,6 +93,22 @@ const MedicalHistoryPage = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
+  const handleFHIRExport = async () => {
+    try {
+      setExporting(true);
+      const result = await exportPatientFHIRData(user.uid);
+      if (result.success) {
+        // Success notification would go here
+        console.log('FHIR export successful');
+      } else {
+        console.error('Export failed:', result.error);
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const TagList = ({ items, colorClass }) => (
     <div className="flex flex-wrap gap-2">
@@ -163,24 +181,39 @@ const MedicalHistoryPage = () => {
         }
       }}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 glass rounded-full px-3 py-1.5 text-sm text-secondary hover-glow-primary"
-        >
-          <FiArrowLeft size={18} />
-          <span className="font-medium">Back</span>
-        </button>
-        <button
-          onClick={handleRefresh}
-          disabled={loading}
-          className="glass rounded-lg border soft-divider px-4 py-2 text-sm text-text hover-glow-primary disabled:opacity-50"
-          title="Refresh records"
-        >
-          <span className="inline-flex items-center gap-2">
-            <FaRedo className={`${loading ? 'animate-spin' : ''}`} />
-            Refresh
-          </span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 glass rounded-full px-3 py-1.5 text-sm text-secondary hover-glow-primary"
+          >
+            <FiArrowLeft size={18} />
+            <span className="font-medium">Back</span>
+          </button>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleFHIRExport}
+            disabled={exporting || loading}
+            className="glass rounded-lg border border-purple-500/30 px-4 py-2 text-sm text-purple-300 hover:bg-purple-500/10 disabled:opacity-50"
+            title="Export as FHIR"
+          >
+            <span className="inline-flex items-center gap-2">
+              <FaDownload className={`${exporting ? 'animate-spin' : ''}`} />
+              {exporting ? 'Exporting...' : 'Export FHIR'}
+            </span>
+          </button>
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="glass rounded-lg border soft-divider px-4 py-2 text-sm text-text hover-glow-primary disabled:opacity-50"
+            title="Refresh records"
+          >
+            <span className="inline-flex items-center gap-2">
+              <FaRedo className={`${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </span>
+          </button>
+        </div>
       </div>
 
       <h1 className="text-xl sm:text-2xl font-bold text-text mb-4">Your Complete Medical History</h1>

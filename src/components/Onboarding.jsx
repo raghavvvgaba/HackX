@@ -301,11 +301,11 @@ function Onboarding() {
 		// Save profile data to userProfile collection
 		const profilePayload =
 			currentStep === 1 ? { basic: formData.basic } :
-			currentStep === 2 ? { 
+			currentStep === 2 ? {
 				medical: {
 					...formData.medical,
 					// Add custom conditions/allergies to arrays if they exist
-					chronicConditions: formData.medical.customChronicCondition 
+					chronicConditions: formData.medical.customChronicCondition
 						? [...formData.medical.chronicConditions.filter(c => c !== 'Other'), formData.medical.customChronicCondition]
 						: formData.medical.chronicConditions.filter(c => c !== 'Other'),
 					allergies: formData.medical.customAllergy
@@ -319,7 +319,9 @@ function Onboarding() {
 						: formData.medical.disabilities.filter(d => d !== 'Other')
 				}
 			} :
-			currentStep === 3 ? { lifestyle: formData.lifestyle } : {};			if (user?.uid && Object.keys(profilePayload).length > 0) {
+			currentStep === 3 ? { lifestyle: formData.lifestyle } : {};
+
+			if (user?.uid && Object.keys(profilePayload).length > 0) {
 				const res = await addUserProfile(user.uid, profilePayload);
 				if (!res.success) throw new Error(res.error || 'Failed to save profile');
 			}
@@ -330,12 +332,12 @@ function Onboarding() {
 				await updateDoc(userDocRef, { onboardingCompleted: true });
 			}
 
-			if (currentStep === 3) { 
+			if (currentStep === 3) {
 				// Show success screen first
 				setShowSuccess(true);
 				// Refresh user profile in background
 				await refreshUserProfile();
-				return; 
+				return;
 			}
 			setCurrentStep((prev) => prev + 1);
 		} catch (error) {

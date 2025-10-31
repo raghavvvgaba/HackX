@@ -13,6 +13,7 @@ import PatientProfilePage from './pages/Doctor/PatientProfilePage';
 import EditProfile from './pages/User/EditProfile';
 import Onboarding from './components/Onboarding';
 import { Profile } from './pages/User/Profile';
+import AuditTrailPage from './pages/User/AuditTrailPage';
 import HospitalLayout from './pages/Hospital/HospitalLayout';
 import HospitalDashboard from './pages/Hospital/HospitalDashboardNew';
 import InstitutionOnboarding from './pages/Hospital/InstitutionOnboarding';
@@ -74,6 +75,7 @@ const App = () => {
           <Route path='medical-history' element={<MedicalHistoryPage />} />
           <Route path='edit-profile' element={<EditProfile />} />
           <Route path='view-profile' element={<Profile />} />
+          <Route path='audit-trail' element={<AuditTrailPage />} />
         </Route>
         <Route path="/doctor" element={<PrivateRoute><DoctorLayout /></PrivateRoute>} >
           <Route index element={<DoctorDashboard />} />

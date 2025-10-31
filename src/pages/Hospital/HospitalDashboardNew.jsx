@@ -1,17 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
-import { 
-  getInstitutionByAdminId, 
-  getInstitutionStaff, 
-  getConsentRequests,
-  getDashboardStats,
-  getMockHospitalUser
-} from '../../services/mockHospitalService';
+import { getHospitalByUid } from '../../services/hospitalService';
 import { FaClock, FaBell, FaUsers, FaHeartbeat, FaHospital, FaChartLine, FaUserMd, FaClipboardList, FaCalendar } from 'react-icons/fa';
 
 export default function HospitalDashboardNew() {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [institution, setInstitution] = useState(null);
@@ -23,15 +17,37 @@ export default function HospitalDashboardNew() {
   });
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    // Check if user is authenticated and has hospital role
+    if (userProfile) {
+      if (userProfile.role !== 'hospital') {
+        // Not a hospital user, redirect to appropriate dashboard
+        if (userProfile.role === 'doctor') {
+          navigate('/doctor');
+        } else if (userProfile.role === 'user') {
+          navigate('/user');
+        }
+        return;
+      }
+
+      // Check if onboarding is completed
+      if (userProfile.onboardingCompleted === false) {
+        navigate('/hospital/onboarding');
+        return;
+      }
+    }
+  }, [userProfile, navigate]);
+
+  useEffect(() => {
+    if (user && userProfile?.role === 'hospital' && userProfile.onboardingCompleted !== false) {
+      loadDashboardData();
+    }
+  }, [user, userProfile]);
 
   const loadDashboardData = async () => {
-    // MOCK MODE: Use mock hospital user
-    const mockUser = getMockHospitalUser();
-    
+    if (!user?.uid) return;
+
     try {
-      const institutionResult = await getInstitutionByAdminId(mockUser.uid);
+      const institutionResult = await getHospitalByUid(user.uid);
 
       if (!institutionResult.success) {
         navigate('/hospital/onboarding');
@@ -40,16 +56,12 @@ export default function HospitalDashboardNew() {
 
       setInstitution(institutionResult.data);
 
-      const [staffResult, statsResult, requestsResult] = await Promise.all([
-        getInstitutionStaff(institutionResult.data.id),
-        getDashboardStats(institutionResult.data.id),
-        getConsentRequests(institutionResult.data.id, 'pending')
-      ]);
-
+      // TODO: Implement real services for staff, stats, and requests
+      // For now, using placeholder values
       setStats({
-        totalPatients: statsResult.success ? statsResult.data.totalPatients : 0,
-        totalStaff: staffResult.success ? staffResult.data.length : 0,
-        pendingRequests: requestsResult.success ? requestsResult.data.length : 0,
+        totalPatients: 0,
+        totalStaff: 0,
+        pendingRequests: 0,
         activeDepartments: institutionResult.data.departments?.length || 0
       });
     } catch (error) {
@@ -103,7 +115,7 @@ export default function HospitalDashboardNew() {
             </div>
             <div className="min-w-0">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text leading-tight break-words">
-                {getGreeting()}, <span className="text-primary">{institution.name}</span>
+                {getGreeting()}, <span className="text-primary">{institution.name || 'Hospital'}</span>
               </h1>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <div className="inline-flex items-center gap-2 glass rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-secondary">
@@ -111,7 +123,7 @@ export default function HospitalDashboardNew() {
                   Hospital Portal
                 </div>
                 <div className={`inline-flex items-center gap-2 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm ${
-                  institution.verified
+                  institution.verified || false
                     ? 'bg-green-100 text-green-700'
                     : 'bg-yellow-100 text-yellow-700'
                 }`}>

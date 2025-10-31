@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
   const [showMenu, setShowMenu] = useState(false);
   const [showShareBox, setShowShareBox] = useState(false);
   const shareBoxRef = useRef(null);
@@ -133,14 +133,14 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Theme Toggle */}
-            <button
+            {/* Theme Toggle - Commented out */}
+            {/* <button
               onClick={toggleTheme}
               className="p-2 rounded-lg border border-white/20 text-white hover:border-white/40 hover:bg-white/5 transition"
               aria-label="Toggle Theme"
             >
               {theme === "light" ? <FiSun size={18} /> : <FiMoon size={18} />}
-            </button>
+            </button> */}
           </motion.div>
         </div>
       </div>

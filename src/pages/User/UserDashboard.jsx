@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import UserHealthProfileBlock from '../../components/UserHealthProfileBlock';
 import MedicalHistoryBlock from '../../components/MedicalHistoryBlock';
 import SharedDoctorsBlock from '../../components/SharedDoctorsBlock';
+import AuditLogsBlock from '../../components/AuditLogsBlock';
 import AIHealthAssistant from '../../components/AIHealthAssistant';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../context/authContext';
@@ -135,6 +136,8 @@ const UserDashboard = () => {
                 {/* Right Column */}
                 <div className="lg:col-span-4 space-y-6 sm:space-y-8 min-w-0">
                     <SharedDoctorsBlock />
+
+                    <AuditLogsBlock />
 
                     {/* AI Health Assistant Widget */}
                     <div className="glass rounded-2xl p-5 sm:p-6 border soft-divider hover-glow-primary">

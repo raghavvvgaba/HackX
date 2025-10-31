@@ -11,7 +11,7 @@ function ShareButton() {
     const [isLoading, setIsLoading] = useState(false);
     const [shareStatus, setShareStatus] = useState(null); // 'success', 'error', or null
     const [errorMessage, setErrorMessage] = useState('');
-    const [doctorName, setDoctorName] = useState('');
+    const [recipientName, setRecipientName] = useState('');
     const shareBoxRef = useRef(null);
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -50,19 +50,21 @@ function ShareButton() {
             
             // Share the profile with the doctor (function now handles doctor lookup internally)
             const shareResult = await shareProfileWithDoctor(
-                user.uid, 
+                user.uid,
                 doctorIdCode
             );
             
             if (shareResult.success) {
-                setDoctorName(shareResult.doctorName || '');
+                // Handle both doctorName (backward compatibility) and recipientName
+                const name = shareResult.recipientName || shareResult.doctorName || '';
+                setRecipientName(name);
                 setShareStatus('success');
                 setTimeout(() => {
                     reset();
                     setShowShareBox(false);
                     setShareStatus(null);
                     setErrorMessage('');
-                    setDoctorName('');
+                    setRecipientName('');
                 }, 2000);
             } else {
                 setErrorMessage(shareResult.error || 'Failed to share profile');
@@ -84,7 +86,7 @@ function ShareButton() {
                 onClick={() => setShowShareBox((prev) => !prev)}
                 className="px-3 py-2 text-sm rounded-xl bg-secondary text-white hover:scale-105 transition"
             >
-                Share To Doctor
+                Share Profile
             </button>
 
                         <AnimatePresence>
@@ -101,28 +103,28 @@ function ShareButton() {
                                                     backdrop-blur border border-secondary/60"
                     >
                         <label className="text-sm text-text font-medium">
-                            Doctor's ID
+                            Doctor's or Hospital's ID
                         </label>
                         <div className="space-y-1">
                             <input
                                 type="text"
-                                placeholder="e.g., DR-HALE-1234"
-                                {...register("doctorId", { 
-                                    required: "Doctor ID is required",
+                                placeholder="e.g., DR-HALE-1234 or HOS-MEDC-5678"
+                                {...register("doctorId", {
+                                    required: "ID is required",
                                     pattern: {
-                                        value: /^DR-[BCDFGHJKLMNPQRSTVWXYZAEIOU]{4}-\d{4}$/i,
-                                        message: "Invalid doctor ID format (DR-XXXX-1234)"
+                                        value: /^(DR|HOS)-[BCDFGHJKLMNPQRSTVWXYZAEIOU]{4}-\d{4}$/i,
+                                        message: "Invalid ID format. Use DR-XXXX-1234 for doctors or HOS-XXXX-1234 for hospitals"
                                     }
                                 })}
-                                                                className="w-full px-3 py-2 rounded-md bg-white/70 dark:bg-black/60 supports-[backdrop-filter]:bg-white/50 dark:supports-[backdrop-filter]:bg-black/50 backdrop-blur 
+                                                                className="w-full px-3 py-2 rounded-md bg-white/70 dark:bg-black/60 supports-[backdrop-filter]:bg-white/50 dark:supports-[backdrop-filter]:bg-black/50 backdrop-blur
                                                                     border border-gray-300 dark:border-gray-600 text-text text-sm uppercase"
-                                maxLength={12}
+                                maxLength={14}
                             />
                             {errors.doctorId && (
                                 <p className="text-red-500 text-xs">{errors.doctorId.message}</p>
                             )}
                             <p className="text-gray-500 text-xs">
-                                Format: DR-XXXX-1234
+                                Format: DR-XXXX-1234 (Doctor) or HOS-XXXX-1234 (Hospital)
                             </p>
                         </div>
                         
@@ -134,7 +136,7 @@ function ShareButton() {
                         
                         {shareStatus === 'success' && (
                             <div className="text-green-600 text-xs bg-green-50 p-2 rounded">
-                                Profile shared successfully{doctorName ? ` with Dr. ${doctorName}!` : '!'}
+                                Profile shared successfully{recipientName ? ` with ${recipientName}!` : '!'}
                             </div>
                         )}
                         

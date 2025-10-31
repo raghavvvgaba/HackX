@@ -7,6 +7,7 @@ import { BsCapsulePill, BsEyeFill, BsEarFill } from 'react-icons/bs';
 import { AiOutlineWarning } from 'react-icons/ai';
 import { getUserProfile } from '../../utils/firestoreService';
 import { useAuth } from '../../context/authContext';
+import ShareButton from '../../components/ShareButton';
 
 export function Profile() {
   const { user } = useAuth();
@@ -127,9 +128,12 @@ export function Profile() {
               <p className="text-secondary text-sm">Overview of your health data</p>
             </div>
           </div>
-          <Link to="../edit-profile" className="glass-cta flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm shadow-lg hover:shadow-primary/30 transition-shadow">
-            <FaEdit /> Edit Profile
-          </Link>
+          <div className="flex items-center gap-3">
+            <ShareButton />
+            <Link to="../edit-profile" className="glass-cta flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm shadow-lg hover:shadow-primary/30 transition-shadow">
+              <FaEdit /> Edit Profile
+            </Link>
+          </div>
         </div>
 
         {/* Grid (reduced gaps & tighter cards) */}

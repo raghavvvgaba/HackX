@@ -6,7 +6,6 @@ import { useAuth } from "../context/authContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import Navbar from "../components/Navbar";
-import { loginHospitalAdmin, getMockHospitalUser } from "../services/mockHospitalService";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ export default function Login() {
     if (!loading && user && userRole) {
       if (userRole === "doctor") {
         navigate("/doctor");
-      } else if (userRole === "hospital_admin") {
+      } else if (userRole === "hospital") {
         navigate("/hospital");
       } else {
         navigate("/user");
@@ -58,37 +57,8 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-    // MOCK MODE: Hospital login bypass
-    if (form.role === "hospital_admin") {
-      try {
-        const result = await loginHospitalAdmin(form.email, form.password);
-        if (result.success) {
-          // Store mock user in localStorage for persistence
-          localStorage.setItem('mockHospitalUser', JSON.stringify(result.user));
-          localStorage.setItem('mockMode', 'true');
-          console.log("Mock Hospital Login successful:", result.user);
-          console.log("localStorage set:", {
-            mockMode: localStorage.getItem('mockMode'),
-            mockUser: localStorage.getItem('mockHospitalUser')
-          });
-          
-          // Small delay to ensure localStorage is set, then navigate
-          setTimeout(() => {
-            window.location.href = "/hospital/dashboard";
-          }, 100);
-          return;
-        } else {
-          setFormError(result.error);
-          return;
-        }
-      } catch (error) {
-        setFormError("Mock login failed. Try: admin@hospital.com / hospital123");
-        return;
-      }
-    }
-    
-    // Regular Firebase login for patients and doctors
+
+    // Firebase login for all users (patients, doctors, hospitals)
     try {
       const { user } = await login(form.email, form.password);
       console.log("Login successful:", user);
@@ -237,9 +207,9 @@ export default function Login() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleRoleSelect("hospital_admin")}
+                  onClick={() => handleRoleSelect("hospital")}
                   className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl font-medium transition-all duration-300 ${
-                    form.role === "hospital_admin"
+                    form.role === "hospital"
                       ? "bg-white dark:bg-white/10 text-primary dark:text-primary shadow-lg dark:shadow-[0_4px_8px_0_rgba(255,255,255,0.10)] transform scale-105 backdrop-blur-sm"
                       : "text-text/70 hover:text-primary hover:bg-white/50 dark:hover:bg-white/5"
                   }`}
@@ -311,7 +281,7 @@ export default function Login() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Log In as {form.role === "doctor" ? "Doctor" : form.role === "hospital_admin" ? "Hospital" : "Patient"}
+                Log In as {form.role === "doctor" ? "Doctor" : form.role === "hospital" ? "Hospital" : "Patient"}
               </motion.button>
 
               <div className="text-center pt-4">

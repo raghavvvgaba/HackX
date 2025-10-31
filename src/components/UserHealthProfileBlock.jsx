@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/authContext';
 import { getUserProfile } from '../utils/firestoreService';
-import { FaUserCircle, FaHeartbeat, FaWeight, FaRulerVertical, FaTint, FaCalendarAlt, FaEdit, FaEye } from 'react-icons/fa';
+import { exportPatientFHIRData } from '../utils/fhirExport';
+import { FaUserCircle, FaHeartbeat, FaWeight, FaRulerVertical, FaTint, FaCalendarAlt, FaEdit, FaEye, FaDownload, FaCheckCircle } from 'react-icons/fa';
 import { MdBloodtype, MdSick } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const UserHealthProfileBlock = () => {
   const { user } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -82,6 +85,24 @@ const UserHealthProfileBlock = () => {
   const { basic, medical } = profileData;
   const age = calculateAge(basic.dob);
   const bmi = calculateBMI(basic.weight, basic.height);
+
+  // Handle FHIR export
+  const handleFHIRExport = async () => {
+    try {
+      setExporting(true);
+      const result = await exportPatientFHIRData(user.uid);
+      if (result.success) {
+        // Success notification would go here
+        console.log('FHIR export successful');
+      } else {
+        console.error('Export failed:', result.error);
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <div className="glass rounded-2xl p-6 border soft-divider hover-glow-primary">
@@ -190,6 +211,20 @@ const UserHealthProfileBlock = () => {
           <FaEye className="text-sm" />
           <span className="font-medium">View Full</span>
         </Link>
+      </div>
+      <div className="flex gap-3 pt-2">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleFHIRExport}
+          disabled={exporting}
+          className="flex-1 glass rounded-lg border border-purple-500/30 text-purple-300 flex items-center justify-center gap-2 px-4 py-3 hover:bg-purple-500/10 transition-all disabled:opacity-50"
+        >
+          <FaDownload className={`text-sm ${exporting ? 'animate-spin' : ''}`} />
+          <span className="font-medium">
+            {exporting ? 'Exporting...' : 'Download FHIR'}
+          </span>
+        </motion.button>
       </div>
       <div className="pt-2">
         <p className="text-xs text-secondary text-center">
